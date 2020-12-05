@@ -349,3 +349,5 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 /src/TwitchMonitorConsole/Settings.cs
+/src/TwichCommander/Settings.cs
+/src/TwitchBot/Settings.cs
