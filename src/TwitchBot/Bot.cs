@@ -16,7 +16,7 @@ namespace TwitchBot
 		ConnectionCredentials credentials = new ConnectionCredentials(Settings.ChannelName, Settings.AccessToken);
 		TwitchClient twitchClient = new TwitchClient();
 
-		private Counters _counters;
+		private LegoStats _legoStats;
 		private Timer _botTimer = default;
 		private int _botTimerTotal;
 
@@ -36,7 +36,7 @@ namespace TwitchBot
 
 			SetBotTimer();
 
-			_counters = new Counters(twitchClient);
+			_legoStats = new LegoStats(twitchClient);
 
 		}
 
@@ -72,16 +72,19 @@ namespace TwitchBot
 			switch (e.Command.CommandText.ToLower())
 			{
 				case "dropbrick":
-					_counters.ExecuteDropBrick(e);
+					_legoStats.DropBrick(e);
 					break;
 				case "oof":
-					_counters.ExecuteOof(e);
+					_legoStats.Oof(e);
 					break;
 				case "stats":
-					_counters.ExecuteStats();
+					_legoStats.Stats();
 					break;
 				case "setproject":
-					_counters.ExecuteSetProject(e);
+					_legoStats.SetProject(e);
+					break;
+				case "project":
+					_legoStats.Project();
 					break;
 			}
 
@@ -104,13 +107,15 @@ namespace TwitchBot
 			_botTimerTotal++;
 
 			if (_botTimerTotal % Settings.ProjectReminderInterval == 0)
-				_counters.RemindToSetProject();
+				_legoStats.RemindToSetProject();
 
 			if (_botTimerTotal % Settings.WaterReminderInterval == 0)
 			{
 				ConsoleHelper.PrintMessageToConsole($"Water Reminder {DateTime.Now.ToLongTimeString()}", foregroundColor, backgroundColor);
 				twitchClient.SendMessage(Settings.ChannelName, $"Hey {Settings.ChannelName} don't forgot to drink some water!");
 			}
+
+			_legoStats.UpdateProjectTimer();
 
 		}
 	}

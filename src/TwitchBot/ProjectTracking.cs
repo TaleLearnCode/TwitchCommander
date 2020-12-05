@@ -16,6 +16,7 @@ namespace TwitchBot
 		public string ProjectName { get; set; }
 		public int BricksDropped { get; set; }
 		public int Oofs { get; set; }
+		public int ProjectTimer { get; set; }
 
 		public ProjectTracking() { }
 
