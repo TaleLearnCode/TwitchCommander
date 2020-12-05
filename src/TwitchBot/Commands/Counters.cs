@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
@@ -38,7 +37,7 @@ namespace TwitchBot.Commands
 
 			_twitchClient.SendMessage(Settings.ChannelName, $"Chad has dropped {_bricksDropped} {(_bricksDropped == 1 ? "brick" : "bricks")} so far this stream.{(!string.IsNullOrWhiteSpace(_projectTracking.ProjectName) ? $" During the {_projectTracking.ProjectName} build, Chad has dropped {_projectTracking.BricksDropped} {(_projectTracking.BricksDropped == 1 ? "brick" : "bricks")}." : string.Empty)}");
 
-			UpdateLocalStats(Settings.BrickDropOutputPath, _bricksDropped);
+			StreamLabel.StoreLabel("BricksDropped", $"Bricks Dropped: {_bricksDropped}");
 
 			PrintStats();
 
@@ -59,7 +58,7 @@ namespace TwitchBot.Commands
 
 			_twitchClient.SendMessage(Settings.ChannelName, $"Chad has had {_oofs} {(_oofs == 1 ? "oof" : "oofs")} so far this stream.{(!string.IsNullOrWhiteSpace(_projectTracking.ProjectName) ? $" During the {_projectTracking.ProjectName} build, Chad has had {_projectTracking.Oofs} {(_projectTracking.Oofs == 1 ? "oof" : "oofs")}." : string.Empty)}");
 
-			UpdateLocalStats(Settings.OofOutputPath, _oofs);
+			StreamLabel.StoreLabel("Oofs", $"Oofs: {_oofs}");
 
 			PrintStats();
 
@@ -106,12 +105,6 @@ namespace TwitchBot.Commands
 		{
 			_projectTracking.BricksDropped += bricksDropped;
 			_projectTracking.Oofs += oofs;
-		}
-
-		private void UpdateLocalStats(string path, int count)
-		{
-			using StreamWriter sw = File.CreateText(path);
-			sw.Write(count);
 		}
 
 		private void PrintStats()
