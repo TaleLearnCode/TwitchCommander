@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace TwitchBot
 {
@@ -8,8 +9,15 @@ namespace TwitchBot
 
 		public static void StoreLabel(string labelName, string label)
 		{
-			using StreamWriter streamWriter = File.CreateText($"{Settings.StreamLabelPath}{labelName}.txt");
-			streamWriter.Write(label);
+			try
+			{
+				using StreamWriter streamWriter = File.CreateText($"{Settings.StreamLabelPath}{labelName}.txt");
+				streamWriter.Write(label);
+			}
+			catch (Exception ex)
+			{
+				ConsoleHelper.PrintException($"StoreLabel: {labelName}", ex);
+			}
 		}
 
 	}
