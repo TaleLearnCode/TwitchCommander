@@ -19,6 +19,12 @@ namespace TwitchBot
 		private LegoStats _legoStats;
 		private Timer _botTimer = default;
 		private int _botTimerTotal;
+		private bool _stayConnected;
+		private int _reconnectStart;
+
+		private const int _timerInternval = 1000;
+		private const int _reconnectCooldown = 30;
+
 
 		internal void Connect(bool logEvents)
 		{
@@ -38,20 +44,34 @@ namespace TwitchBot
 
 			_legoStats = new LegoStats(twitchClient);
 
-		}
+			_stayConnected = true;
 
-		private void TwitchClient_OnDisconnected(object sender, OnDisconnectedEventArgs e)
-		{
-			Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine("Bot Disconnected");
-			Console.ForegroundColor = ConsoleColor.White;
 		}
 
 		internal void Disconnect()
 		{
+			_stayConnected = false;
 			twitchClient.Disconnect();
 			if (_botTimer is not null)
 				_botTimer.Dispose();
+		}
+
+		private void TwitchClient_OnDisconnected(object sender, OnDisconnectedEventArgs e)
+		{
+
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.WriteLine("Bot Disconnected");
+			Console.ForegroundColor = ConsoleColor.White;
+
+			if (_stayConnected && (_reconnectStart == 0 || (_reconnectStart < (_botTimerTotal - _reconnectCooldown))))
+			{
+				_stayConnected = false;
+				Console.BackgroundColor = ConsoleColor.Red;
+				Console.WriteLine("Attempting to reconnect...");
+				Console.BackgroundColor = ConsoleColor.Black;
+				twitchClient.Connect();
+				_reconnectStart = _botTimerTotal;
+			}
 		}
 
 		private void TwitchClient_OnLog(object sender, OnLogArgs e)
@@ -92,7 +112,7 @@ namespace TwitchBot
 
 		private void SetBotTimer()
 		{
-			_botTimer = new Timer(Settings.TimerInternval);
+			_botTimer = new Timer(_timerInternval);
 			_botTimer.Elapsed += OnBotTimerElapsed;
 			_botTimer.AutoReset = true;
 			_botTimer.Enabled = true;
