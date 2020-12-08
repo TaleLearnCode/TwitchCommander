@@ -168,7 +168,7 @@ namespace TwitchBot.Commands
 
 		private void WriteProjectTimerLabel()
 		{
-			StreamLabel.StoreLabel("ProjectTimer", (new TimeSpan(0, 0, _projectTracking.ProjectTimer).ToString(@"hh\:m\:ss")));
+			StreamLabel.StoreLabel("ProjectTimer", (new TimeSpan(0, 0, _projectTracking.ProjectTimer).ToString(@"hh\:mm\:ss")));
 		}
 
 		private void WriteStreamDropLabel()
