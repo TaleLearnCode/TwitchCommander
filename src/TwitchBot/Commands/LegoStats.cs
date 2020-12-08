@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using TwitchBot.settings;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 
@@ -15,9 +16,16 @@ namespace TwitchBot.Commands
 		private string _streamKey;
 		private ProjectTracking _projectTracking = new();
 
-		public LegoStats(TwitchClient twitchClient)
+		private static TwitchSettings _twitchSettings;
+		private static StreamLabelSettings _streamLabelSettings;
+		private static AzureStorageSettings _azureStorageSettings;
+
+		public LegoStats(TwitchClient twitchClient, TwitchSettings twitchSettings, StreamLabelSettings streamLabelSettings, AzureStorageSettings azureStorageSettings)
 		{
 			_twitchClient = twitchClient;
+			_twitchSettings = twitchSettings;
+			_streamLabelSettings = streamLabelSettings;
+			_azureStorageSettings = azureStorageSettings;
 		}
 
 		public void DropBrick(OnChatCommandReceivedArgs commandArgs)
@@ -35,7 +43,7 @@ namespace TwitchBot.Commands
 				UpdateProjectStats(bricksDropped: numberOfBricksDropped);
 			}
 
-			_twitchClient.SendMessage(Settings.ChannelName, $"Chad has dropped {_bricksDropped} {(_bricksDropped == 1 ? "brick" : "bricks")} so far this stream.{(!string.IsNullOrWhiteSpace(_projectTracking.ProjectName) ? $" During the {_projectTracking.ProjectName} build, Chad has dropped {_projectTracking.BricksDropped} {(_projectTracking.BricksDropped == 1 ? "brick" : "bricks")}." : string.Empty)}");
+			_twitchClient.SendMessage(_twitchSettings.ChannelName, $"Chad has dropped {_bricksDropped} {(_bricksDropped == 1 ? "brick" : "bricks")} so far this stream.{(!string.IsNullOrWhiteSpace(_projectTracking.ProjectName) ? $" During the {_projectTracking.ProjectName} build, Chad has dropped {_projectTracking.BricksDropped} {(_projectTracking.BricksDropped == 1 ? "brick" : "bricks")}." : string.Empty)}");
 
 			WriteStreamDropLabel();
 			WriteProjectDropLabel();
@@ -57,7 +65,7 @@ namespace TwitchBot.Commands
 				UpdateProjectStats(oofs: 1);
 			}
 
-			_twitchClient.SendMessage(Settings.ChannelName, $"Chad has had {_oofs} {(_oofs == 1 ? "oof" : "oofs")} so far this stream.{(!string.IsNullOrWhiteSpace(_projectTracking.ProjectName) ? $" During the {_projectTracking.ProjectName} build, Chad has had {_projectTracking.Oofs} {(_projectTracking.Oofs == 1 ? "oof" : "oofs")}." : string.Empty)}");
+			_twitchClient.SendMessage(_twitchSettings.ChannelName, $"Chad has had {_oofs} {(_oofs == 1 ? "oof" : "oofs")} so far this stream.{(!string.IsNullOrWhiteSpace(_projectTracking.ProjectName) ? $" During the {_projectTracking.ProjectName} build, Chad has had {_projectTracking.Oofs} {(_projectTracking.Oofs == 1 ? "oof" : "oofs")}." : string.Empty)}");
 
 			WriteStreamOofLabel();
 			WriteProjectOofLabel();
@@ -71,7 +79,7 @@ namespace TwitchBot.Commands
 		public void Stats()
 		{
 			CheckForStreamId();
-			_twitchClient.SendMessage(Settings.ChannelName, $"Chad has dropped {_bricksDropped} {(_bricksDropped == 1 ? "brick" : "bricks")} and had {_oofs} {(_oofs == 1 ? "oof" : "oofs")} so far this stream.{(!string.IsNullOrWhiteSpace(_projectTracking.ProjectName) ? $" During the {_projectTracking.ProjectName} build, Chad has dropped {_projectTracking.BricksDropped} {(_projectTracking.BricksDropped == 1 ? "brick" : "bricks")} and had {_projectTracking.Oofs} {(_projectTracking.Oofs == 1 ? "oof" : "oofs")}." : string.Empty)}");
+			_twitchClient.SendMessage(_twitchSettings.ChannelName, $"Chad has dropped {_bricksDropped} {(_bricksDropped == 1 ? "brick" : "bricks")} and had {_oofs} {(_oofs == 1 ? "oof" : "oofs")} so far this stream.{(!string.IsNullOrWhiteSpace(_projectTracking.ProjectName) ? $" During the {_projectTracking.ProjectName} build, Chad has dropped {_projectTracking.BricksDropped} {(_projectTracking.BricksDropped == 1 ? "brick" : "bricks")} and had {_projectTracking.Oofs} {(_projectTracking.Oofs == 1 ? "oof" : "oofs")}." : string.Empty)}");
 		}
 
 		public void SetProject(OnChatCommandReceivedArgs commandArgs)
@@ -81,17 +89,17 @@ namespace TwitchBot.Commands
 			{
 				if (commandArgs.Command.ArgumentsAsList.Any())
 				{
-					_projectTracking = ProjectTracking.Retrieve(Settings.ChannelName, commandArgs.Command.ArgumentsAsString);
+					_projectTracking = ProjectTracking.Retrieve(_twitchSettings.ChannelName, commandArgs.Command.ArgumentsAsString, _azureStorageSettings);
 					if (_projectTracking is null)
 					{
-						_projectTracking = new ProjectTracking(Settings.ChannelName, commandArgs.Command.ArgumentsAsString);
+						_projectTracking = new ProjectTracking(_twitchSettings.ChannelName, commandArgs.Command.ArgumentsAsString, _azureStorageSettings);
 						_projectTracking.Save();
 					}
-					_twitchClient.SendMessage(Settings.ChannelName, $"Now working on the {_projectTracking.ProjectName} project");
+					_twitchClient.SendMessage(_twitchSettings.ChannelName, $"Now working on the {_projectTracking.ProjectName} project");
 					WriteProjectDropLabel();
 					WriteProjectOofLabel();
 					WriteProjectTimerLabel();
-					StreamLabel.StoreLabel("Project", _projectTracking.ProjectName);
+					StreamLabel.StoreLabel(_streamLabelSettings.OutputPath, "Project", _projectTracking.ProjectName);
 				}
 			}
 		}
@@ -99,14 +107,14 @@ namespace TwitchBot.Commands
 		public void Project()
 		{
 			CheckForStreamId();
-			_twitchClient.SendMessage(Settings.ChannelName, $"Chad is currently building the {_projectTracking.ProjectName}.");
+			_twitchClient.SendMessage(_twitchSettings.ChannelName, $"Chad is currently building the {_projectTracking.ProjectName}.");
 		}
 
 		public void RemindToSetProject()
 		{
 			if (string.IsNullOrWhiteSpace(_projectTracking.RowKey))
 			{
-				_twitchClient.SendMessage(Settings.ChannelName, $"Hey {Settings.ChannelName} don't forget to set the project that you are working on.");
+				_twitchClient.SendMessage(_twitchSettings.ChannelName, $"Hey {_twitchSettings.ChannelName} don't forget to set the project that you are working on.");
 				// TODO: Global variable for console colors?
 				ConsoleHelper.PrintMessageToConsole($"Set Project Reminder {DateTime.Now.ToLongTimeString()}", ConsoleColor.Blue, ConsoleColor.Black);
 			}
@@ -139,7 +147,7 @@ namespace TwitchBot.Commands
 			try
 			{
 				// TODO: Remove the hard-coded UserName
-				var mostRecentStreamKey = StreamSnapshot.GetMostRecentStreamId("TaleLearnCode");
+				var mostRecentStreamKey = StreamSnapshot.GetMostRecentStreamId("TaleLearnCode", _azureStorageSettings);
 				if (mostRecentStreamKey != _streamKey)
 				{
 					_streamKey = mostRecentStreamKey;
@@ -158,27 +166,27 @@ namespace TwitchBot.Commands
 
 		private void WriteProjectDropLabel()
 		{
-			StreamLabel.StoreLabel("BricksDropped-Project", $"Bricks Dropped: {_projectTracking.BricksDropped}");
+			StreamLabel.StoreLabel(_streamLabelSettings.OutputPath, "BricksDropped-Project", $"Bricks Dropped: {_projectTracking.BricksDropped}");
 		}
 
 		private void WriteProjectOofLabel()
 		{
-			StreamLabel.StoreLabel("Oofs-Project", $"Oofs: {_projectTracking.Oofs}");
+			StreamLabel.StoreLabel(_streamLabelSettings.OutputPath, "Oofs-Project", $"Oofs: {_projectTracking.Oofs}");
 		}
 
 		private void WriteProjectTimerLabel()
 		{
-			StreamLabel.StoreLabel("ProjectTimer", (new TimeSpan(0, 0, _projectTracking.ProjectTimer).ToString(@"hh\:mm\:ss")));
+			StreamLabel.StoreLabel(_streamLabelSettings.OutputPath, "ProjectTimer", (new TimeSpan(0, 0, _projectTracking.ProjectTimer).ToString(@"hh\:mm\:ss")));
 		}
 
 		private void WriteStreamDropLabel()
 		{
-			StreamLabel.StoreLabel("BricksDropped-Stream", $"Bricks Dropped: {_bricksDropped}");
+			StreamLabel.StoreLabel(_streamLabelSettings.OutputPath, "BricksDropped-Stream", $"Bricks Dropped: {_bricksDropped}");
 		}
 
 		private void WriteStreamOofLabel()
 		{
-			StreamLabel.StoreLabel("Oofs-Stream", $"Oofs: {_oofs}");
+			StreamLabel.StoreLabel(_streamLabelSettings.OutputPath, "Oofs-Stream", $"Oofs: {_oofs}");
 		}
 
 	}

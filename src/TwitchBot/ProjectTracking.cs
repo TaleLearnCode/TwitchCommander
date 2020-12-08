@@ -2,12 +2,16 @@
 using Azure.Data.Tables;
 using System;
 using System.Linq;
+using TwitchBot.settings;
 
 namespace TwitchBot
 {
 
 	public class ProjectTracking : ITableEntity
 	{
+
+		private static AzureStorageSettings _azureStorageSettings;
+
 		public string PartitionKey { get; set; }  // ChannelName
 		public string RowKey { get; set; } // ProjectName
 		public DateTimeOffset? Timestamp { get; set; }
@@ -20,26 +24,32 @@ namespace TwitchBot
 
 		public ProjectTracking() { }
 
-		public ProjectTracking(string channelName, string projectName)
+		public ProjectTracking(string channelName, string projectName, AzureStorageSettings azureStorageSettings)
 		{
 			PartitionKey = channelName;
 			RowKey = projectName.ToLower();
 			ProjectName = projectName;
+			_azureStorageSettings = azureStorageSettings;
 		}
 
-		private static TableClient GetTableClient()
+		private static TableClient GetTableClient(AzureStorageSettings azureStorageSettings)
 		{
 			TableClient tableClient;
-			tableClient = new TableClient(new Uri(Settings.StorageUri),
+			tableClient = new TableClient(new Uri(azureStorageSettings.Uri),
 					"BricksWithChad",
-					new TableSharedKeyCredential(Settings.StorageAccountName, Settings.StroageAccountKey));
+					new TableSharedKeyCredential(azureStorageSettings.AccountName, azureStorageSettings.AccountKey));
 			return tableClient;
 		}
 
-		public static ProjectTracking Retrieve(string channelName, string projectName)
+		private TableClient GetTableClient()
+		{
+			return GetTableClient(_azureStorageSettings);
+		}
+
+		public static ProjectTracking Retrieve(string channelName, string projectName, AzureStorageSettings azureStorageSettings)
 		{
 
-			ProjectTracking projectTracking = GetTableClient().Query<ProjectTracking>(s => s.PartitionKey == channelName && s.RowKey == projectName.ToLower()).FirstOrDefault();
+			ProjectTracking projectTracking = GetTableClient(azureStorageSettings).Query<ProjectTracking>(s => s.PartitionKey == channelName && s.RowKey == projectName.ToLower()).FirstOrDefault();
 
 			return projectTracking;
 

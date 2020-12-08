@@ -351,3 +351,8 @@ MigrationBackup/
 /src/TwitchMonitorConsole/Settings.cs
 /src/TwichCommander/Settings.cs
 /src/TwitchBot/Settings.cs
+/src/TwitchBot/settings/Twitch.json
+/src/TwitchBot/settings/AzureStorrage.json
+/src/TwitchBot/settings/StreamLabels.cs
+/src/TwitchBot/settings/appsettings.json
+/src/TwitchBot/Settings/TimerIntervals.json

@@ -2,6 +2,7 @@
 using Azure.Data.Tables;
 using System;
 using System.Linq;
+using TwitchBot.settings;
 using TwitchLib.Api;
 using TwitchLib.Api.Helix.Models.Streams;
 
@@ -48,13 +49,13 @@ namespace TwitchBot
 
 
 
-		public static string GetMostRecentStreamId(string channelName)
+		public static string GetMostRecentStreamId(string channelName, AzureStorageSettings azureStorageSettings)
 		{
 
 			TableClient tableClient;
-			tableClient = new TableClient(new Uri(Settings.StorageUri),
+			tableClient = new TableClient(new Uri(azureStorageSettings.Uri),
 					"StreamSnapshot",
-					new TableSharedKeyCredential(Settings.StorageAccountName, Settings.StroageAccountKey));
+					new TableSharedKeyCredential(azureStorageSettings.AccountName, azureStorageSettings.AccountKey));
 
 			StreamSnapshot lastStreamSnapshot = tableClient.Query<StreamSnapshot>(s => s.PartitionKey == channelName).OrderBy(s => s.RowKey).LastOrDefault();
 

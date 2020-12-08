@@ -1,14 +1,26 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
+using System.IO;
+using TwitchBot.settings;
 
 namespace TwitchBot
 {
+
 	class Program
 	{
+
+		private static IConfigurationRoot _config;
+		private static StreamLabelSettings _streamLabelSettings = new();
+		private static TimerIntervalSettings _timerIntervalSettings = new();
+		private static AzureStorageSettings _azureStorage = new();
+		private static TwitchSettings _twitchSettings = new();
+
 		static void Main()
 		{
 			WelcomeUser();
+			Initialize();
 
-			Bot bot = new Bot();
+			Bot bot = new Bot(_twitchSettings, _azureStorage, _streamLabelSettings, _timerIntervalSettings);
 			bot.Connect(false);
 			Console.ReadLine();
 			bot.Disconnect();
@@ -27,5 +39,24 @@ namespace TwitchBot
 			Console.ForegroundColor = ConsoleColor.White;
 		}
 
+		private static void Initialize()
+		{
+			var builder = new ConfigurationBuilder()
+				.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "Settings"))
+				.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+				.AddJsonFile("AzureStorage.json", optional: true, reloadOnChange: true)
+				.AddJsonFile("TimerIntervals.json", optional: true, reloadOnChange: true)
+				.AddJsonFile("Twitch.json", optional: true, reloadOnChange: true);
+			_config = builder.Build();
+
+			_config.GetSection("StreamLabels").Bind(_streamLabelSettings);
+			_config.GetSection("TimerInterval").Bind(_timerIntervalSettings);
+			_config.GetSection("AzureStorage").Bind(_azureStorage);
+			_config.GetSection("Twitch").Bind(_twitchSettings);
+
+		}
+
+
 	}
+
 }

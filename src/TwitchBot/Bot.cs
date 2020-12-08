@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Timers;
 using TwitchBot.Commands;
+using TwitchBot.settings;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
@@ -12,8 +13,25 @@ namespace TwitchBot
 	public class Bot
 	{
 
+		private static StreamLabelSettings _streamLabelSettings;
+		private static TimerIntervalSettings _timerIntervalSettings;
+		private static AzureStorageSettings _azureStorageSettings;
+		private static TwitchSettings _twitchSettings;
+
+
+
+		public Bot(TwitchSettings twitchSettings, AzureStorageSettings azureStorageSettings, StreamLabelSettings streamLabelSettings, TimerIntervalSettings timerIntervalSettings)
+		{
+		
+			_twitchSettings = twitchSettings;
+			_azureStorageSettings = azureStorageSettings;
+			_streamLabelSettings = streamLabelSettings;
+			_timerIntervalSettings = timerIntervalSettings;
+		}
+
+
 		// TwitchTokenGenerator.com
-		ConnectionCredentials credentials = new ConnectionCredentials(Settings.ChannelName, Settings.AccessToken);
+		ConnectionCredentials credentials;// = new ConnectionCredentials(_twitchSettings.ChannelName, _twitchSettings.AccessToken);
 		TwitchClient twitchClient = new TwitchClient();
 
 		private LegoStats _legoStats;
@@ -25,11 +43,12 @@ namespace TwitchBot
 		private const int _timerInternval = 1000;
 		private const int _reconnectCooldown = 30;
 
-
 		internal void Connect(bool logEvents)
 		{
 
-			twitchClient.Initialize(credentials, Settings.ChannelName);
+			credentials = new ConnectionCredentials(_twitchSettings.ChannelName, _twitchSettings.AccessToken);
+
+			twitchClient.Initialize(credentials, _twitchSettings.ChannelName);
 
 			if (logEvents)
 				twitchClient.OnLog += TwitchClient_OnLog;
@@ -42,7 +61,7 @@ namespace TwitchBot
 
 			SetBotTimer();
 
-			_legoStats = new LegoStats(twitchClient);
+			_legoStats = new LegoStats(twitchClient, _twitchSettings, _streamLabelSettings, _azureStorageSettings);
 
 			_stayConnected = true;
 
@@ -126,13 +145,13 @@ namespace TwitchBot
 
 			_botTimerTotal++;
 
-			if (_botTimerTotal % Settings.ProjectReminderInterval == 0)
+			if (_botTimerTotal % _timerIntervalSettings.ProjectReminder == 0)
 				_legoStats.RemindToSetProject();
 
-			if (_botTimerTotal % Settings.WaterReminderInterval == 0)
+			if (_botTimerTotal % _timerIntervalSettings.WaterReminder == 0)
 			{
 				ConsoleHelper.PrintMessageToConsole($"Water Reminder {DateTime.Now.ToLongTimeString()}", foregroundColor, backgroundColor);
-				twitchClient.SendMessage(Settings.ChannelName, $"Hey {Settings.ChannelName} don't forgot to drink some water!");
+				twitchClient.SendMessage(_twitchSettings.ChannelName, $"Hey {_twitchSettings.ChannelName} don't forgot to drink some water!");
 			}
 
 			_legoStats.UpdateProjectTimer();
