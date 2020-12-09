@@ -1,6 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Timers;
+﻿using System;
+using TaleLearnCode.TwitchCommander.Events;
 using TaleLearnCode.TwitchCommander.Settings;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
@@ -13,104 +12,125 @@ namespace TaleLearnCode.TwitchCommander
 	public class WOPR
 	{
 
-		private static StreamLabelSettings _streamLabelSettings;
-		private static TimerIntervalSettings _timerIntervalSettings;
-		private static AzureStorageSettings _azureStorageSettings;
 		private static TwitchSettings _twitchSettings;
-		private readonly ILogger<WOPR> _logger;
-
-		private const int _timerInterval = 1000;
-		private Timer _timer = default;
-		private TimeSpan _timerElapsed;
-
-		private const int _reconnectCooldown = 30;
-		private bool _stayConnected;
-		private double _reconnectStart;
-
-
-		public WOPR(
-			TwitchSettings twitchSettings,
-			AzureStorageSettings azureStorageSettings,
-			StreamLabelSettings streamLabelSettings,
-			TimerIntervalSettings timerIntervalSettings,
-			ILogger<WOPR> logger)
-		{
-
-			_twitchSettings = twitchSettings;
-			_azureStorageSettings = azureStorageSettings;
-			_streamLabelSettings = streamLabelSettings;
-			_timerIntervalSettings = timerIntervalSettings;
-			_logger = logger;
-
-			InitializeTimer();
-
-		}
 
 		ConnectionCredentials credentials;
 		TwitchClient twitchClient = new();
 
-		public void Connect(bool logEvents)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="WOPR"/> class.
+		/// </summary>
+		/// <param name="twitchSettings">The twitch settings.</param>
+		public WOPR(TwitchSettings twitchSettings)
+		{
+			_twitchSettings = twitchSettings;
+		}
+
+		/// <summary>
+		/// Connects to the specified Twitch channel.
+		/// </summary>
+		/// <param name="channelName">Name of the Twitch channel to connect to.</param>
+		/// <param name="logEvents">If set to <c>true</c> then events will be logged.</param>
+		/// <returns></returns>
+		public void Connect(string channelName, bool logEvents)
 		{
 
 			credentials = new ConnectionCredentials(_twitchSettings.ChannelName, _twitchSettings.AccessToken);
 
-			twitchClient.Initialize(credentials, _twitchSettings.ChannelName);
+			twitchClient.Initialize(credentials, channelName);
 
-			if (logEvents) twitchClient.OnLog += TwitchClient_OnLog;
+			if (logEvents)
+				twitchClient.OnLog += TwitchClient_OnLog;
+
 			twitchClient.OnConnected += TwitchClient_OnConnected;
-			twitchClient.OnChatCommandReceived += TwitchClient_OnChatCommandReceived;
 			twitchClient.OnDisconnected += TwitchClient_OnDisconnected;
 
 			twitchClient.Connect();
 
 		}
 
-		public void Disconnect()
-		{
-			_stayConnected = false;
-			twitchClient.Disconnect();
-			_timer?.Dispose();
-		}
-
-		private void TwitchClient_OnDisconnected(object sender, OnDisconnectedEventArgs e)
-		{
-			_logger.LogWarning($"{nameof(WOPR)} Disconnected");
-
-			if (_stayConnected && (_reconnectStart == 0 || (_reconnectStart < (_timerElapsed.TotalSeconds - _reconnectCooldown))))
-			{
-				_stayConnected = false;
-				_logger.LogInformation("Attempting to reconnect...");
-				twitchClient.Connect();
-				_reconnectStart = _timerElapsed.TotalSeconds;
-			}
-		}
-
-		private void TwitchClient_OnChatCommandReceived(object sender, OnChatCommandReceivedArgs e)
-		{
-			throw new NotImplementedException();
-		}
-
+		/// <summary>
+		/// Handles the <see cref="TwitchClient.OnConnected"/> event.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="OnConnectedArgs"/> instance containing the event data.</param>
 		private void TwitchClient_OnConnected(object sender, OnConnectedArgs e)
 		{
-			_logger.LogInformation($"{nameof(WOPR)} Connected");
+			RaiseOnBotConnected(e);
 		}
 
+		/// <summary>
+		/// Raised when the bot connects to Twitch.
+		/// </summary>
+		public EventHandler<OnBotConnectedArgs> OnBotConnected;
+
+		/// <summary>
+		/// Raises the <see cref="OnBotConnected"/> event upon the bot connecting to Twitch.
+		/// </summary>
+		/// <param name="onConnectedArgs">The <see cref="OnConnectedArgs"/> arguments from the <see cref="TwitchClient.OnConnected"/> event.</param>
+		/// <returns></returns>
+		private void RaiseOnBotConnected(OnConnectedArgs onConnectedArgs)
+		{
+			OnBotConnectedArgs onBotConnectedArgs = new(onConnectedArgs);
+			OnBotConnected.Invoke(this, onBotConnectedArgs);
+		}
+
+		/// <summary>
+		/// Disconnects the instance from Twitch.
+		/// </summary>
+		public void Disconnect()
+		{
+			twitchClient.Disconnect();
+		}
+
+		/// <summary>
+		/// Handles the <see cref="TwitchClient.OnDisconnected"/> event.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="OnDisconnectedEventArgs"/> instance containing the event data.</param>
+		private void TwitchClient_OnDisconnected(object sender, OnDisconnectedEventArgs e)
+		{
+			RaiseOnBotDisconnected();
+		}
+
+		/// <summary>
+		/// Raised when the bot disconnected from Twitch.
+		/// </summary>
+		public EventHandler<OnBotDisconnectedArgs> OnBotDisconnected;
+
+		/// <summary>
+		/// Raises the <see cref="OnBotDisconnected"/> event upon the bot disconnecting from Twitch.
+		/// </summary>
+		private void RaiseOnBotDisconnected()
+		{
+			OnBotDisconnectedArgs onBotDisconnectedArgs = new(_twitchSettings.ChannelName);
+			OnBotDisconnected.Invoke(this, onBotDisconnectedArgs);
+		}
+
+		/// <summary>
+		/// Handles the <see cref="TwitchClient.OnLog"/> event.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="OnLogArgs"/> instance containing the event data.</param>
+		/// <returns></returns>
 		private void TwitchClient_OnLog(object sender, OnLogArgs e)
 		{
-			_logger.LogDebug(e.Data);
+			RaiseOnLoggedEvent(e);
 		}
 
-		private void InitializeTimer()
-		{
-			_timer = new Timer(_timerInterval);
-			_timer.Elapsed += OnTimerElapsed;
-			_timer.AutoReset = true;
-			_timer.Enabled = true;
-		}
+		/// <summary>
+		/// Raised when a Twitch logged event occurs.
+		/// </summary>
+		public EventHandler<OnLoggedEventArgs> OnLoggedEvent;
 
-		private void OnTimerElapsed(object sender, ElapsedEventArgs e)
+		/// <summary>
+		/// Raises the <see cref="OnLoggedEvent"/> event upon Twitch logging an event.
+		/// </summary>
+		/// <param name="onLogArgs">The <see cref="OnLogArgs"/> arguments from the <see cref="TwitchClient.OnLog"/> event.</param>
+		/// <returns></returns>
+		private void RaiseOnLoggedEvent(OnLogArgs onLogArgs)
 		{
-			_timerElapsed.Add(TimeSpan.FromMilliseconds(_timerInterval));
+			OnLoggedEvent.Invoke(this, new OnLoggedEventArgs(onLogArgs));
 		}
 
 	}

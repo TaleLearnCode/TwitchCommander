@@ -45,6 +45,10 @@ namespace TwichCommander
 		private void TwitchClient_OnMessageReceived(object sender, OnMessageReceivedArgs e)
 		{
 			ChatBox.BeginUpdate();
+
+			ChatBox.Invoke();
+
+
 			ChatBox.Items.Add($"{e.ChatMessage.Username}: {e.ChatMessage.Message}");
 			ChatBox.EndUpdate();
 		}

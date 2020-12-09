@@ -43,6 +43,22 @@ namespace TaleLearnCode.TwitchCommander
 
 		}
 
+		public static void PrintTextToConsole(string message, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black)
+		{
+
+			ConsoleColor currentBackground = Console.BackgroundColor;
+			ConsoleColor currentForeground = Console.ForegroundColor;
+
+			Console.BackgroundColor = backgroundColor;
+			Console.ForegroundColor = foregroundColor;
+			Console.Write(message);
+
+			Console.ForegroundColor = currentForeground;
+			Console.BackgroundColor = currentBackground;
+
+		}
+
+
 
 
 	}
