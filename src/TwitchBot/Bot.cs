@@ -125,6 +125,10 @@ namespace TwitchBot
 				case "project":
 					_legoStats.Project();
 					break;
+				case "so":
+				case "shoutout":
+					// do the shoutout
+					break;
 			}
 
 		}

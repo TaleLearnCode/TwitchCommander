@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using TaleLearnCode.TwitchCommander.AzureStorage;
 using TaleLearnCode.TwitchCommander.Settings;
 
@@ -16,6 +17,12 @@ namespace TaleLearnCode.TwitchCommander
 		/// </value>
 		public string ChannelName { get; set; }
 
+		/// <summary>
+		/// Gets or sets the text used to initiate the command.
+		/// </summary>
+		/// <value>
+		/// A <c>string</c> the command initialization text.
+		/// </value>
 		public string Command { get; set; }
 
 		/// <summary>
@@ -88,7 +95,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// <value>
 		/// A <see cref="List{string}"/>representing the list of command aliases.
 		/// </value>
-		public List<string> CommandAliases { get; set; }
+		public List<string> CommandAliases { get; set; } = new();
 
 		/// <summary>
 		/// Retrieves all of the chat commands for the specified <paramref name="channelName"/>.
@@ -108,9 +115,14 @@ namespace TaleLearnCode.TwitchCommander
 		/// <param name="command">The command to be retrieved.</param>
 		/// <param name="azureStorageSettings">A <see cref="AzureStorageSettings"/> containing the Azure Storage connection details.</param>
 		/// <returns></returns>
-		public static ChatCommand Retrieve(string channelName, string command, AzureStorageSettings azureStorageSettings)
+		public static ChatCommand RetrieveByCommand(string channelName, string command, AzureStorageSettings azureStorageSettings)
 		{
-			return ChatCommandEntity.Retrieve(channelName, command, azureStorageSettings);
+			return ChatCommandEntity.RetrieveByCommand(channelName, command, azureStorageSettings);
+		}
+
+		public static ChatCommand RetrieveByCommandAlias(string channelName, string commandAlias, AzureStorageSettings azureStorageSettings)
+		{
+			return ChatCommandEntity.RetrieveByCommandAlias(channelName, commandAlias, azureStorageSettings);
 		}
 
 		/// <summary>
@@ -121,6 +133,9 @@ namespace TaleLearnCode.TwitchCommander
 		{
 			if (!string.IsNullOrWhiteSpace(ChannelName) && !string.IsNullOrWhiteSpace(CommandName))
 				ToChatCommandEntity().Save(azureStorageSettings);
+			if (CommandAliases.Any())
+				foreach (var commandAlias in CommandAliases)
+					new ChatCommandAliasEntity(ChannelName, Command, commandAlias).Save(azureStorageSettings);
 		}
 
 		private ChatCommandEntity ToChatCommandEntity()
@@ -136,8 +151,7 @@ namespace TaleLearnCode.TwitchCommander
 				IsEnabledWhenNotStreaming = IsEnabledWhenNotStreaming,
 				CommandResponseType = CommandResponseType,
 				UserCooldown = UserCooldown,
-				GlobalCooldown = GlobalCooldown,
-				CommandAliases = string.Join('|', CommandAliases)
+				GlobalCooldown = GlobalCooldown
 			};
 		}
 

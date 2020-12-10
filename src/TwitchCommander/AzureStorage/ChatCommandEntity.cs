@@ -47,21 +47,6 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 		/// </value>
 		public ETag ETag { get; set; }
 
-		///// <summary>
-		///// Gets or sets the name of the Twitch channel the command is associated with.
-		///// </summary>
-		///// <value>
-		///// A <c>string</c> representing the Twitch channel name.
-		///// </value>
-		///// <remarks>This value is a facade to <see cref="PartitionKey"/>.</remarks>
-		//public string ChannelName
-		//{
-		//	get { return PartitionKey; }
-		//	set { PartitionKey = value; }
-		//}
-
-		//public string Command { get; set; }
-
 		/// <summary>
 		/// Gets or sets the name of the chat command.
 		/// </summary>
@@ -128,22 +113,14 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 		public int GlobalCooldown { get; set; }
 
 		/// <summary>
-		/// Gets or sets the aliases for the command text.
-		/// </summary>
-		/// <value>
-		/// A pipe-delimited <see cref="string"/> representing the list of command aliases.
-		/// </value>
-		public string CommandAliases { get; set; }
-
-		/// <summary>
 		/// Retrieves all of the chat commands for the specified <paramref name="channelName"/>.
 		/// </summary>
 		/// <param name="channelName">Name of the channel whose chat commands to be retrieved.</param>
 		/// <param name="azureStorageSettings">A <see cref="AzureStorageSettings"/> containing the Azure Storage connection details.</param>
 		/// <returns>A <see cref="List{ChatCommand}"/> representing the list of chat commands for the channel.</returns>
-		public static List<ChatCommand> Retrieve(string channelName, AzureStorageSettings azureStorageSettings)
+		public static List<ChatCommand> Retrieve(string channelName, AzureStorageSettings azureStorageSettings, bool retrieveAliases = false)
 		{
-			return ToChatCommandList(AzureStorageHelper.GetTableClient(azureStorageSettings, "tableName").Query<ChatCommandEntity>(c => c.PartitionKey == channelName.ToLower()).ToList());
+			return ToChatCommandList(AzureStorageHelper.GetTableClient(azureStorageSettings, azureStorageSettings.ChatCommandTableName).Query<ChatCommandEntity>(c => c.PartitionKey == channelName.ToLower()).ToList(), retrieveAliases, azureStorageSettings);
 		}
 
 		/// <summary>
@@ -152,11 +129,30 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 		/// <param name="channelName">Name of the channel whose chat commands to be retrieved.</param>
 		/// <param name="command">The command to be retrieved.</param>
 		/// <param name="azureStorageSettings">A <see cref="AzureStorageSettings"/> containing the Azure Storage connection details.</param>
-		/// <returns></returns>
-		public static ChatCommand Retrieve(string channelName, string command, AzureStorageSettings azureStorageSettings)
+		/// <returns>A <see cref="ChatCommand"/> representing the searched for chat command.</returns>
+		public static ChatCommand RetrieveByCommand(string channelName, string command, AzureStorageSettings azureStorageSettings, bool retrieveAliases = false)
 		{
 			var response = AzureStorageHelper.GetTableClient(azureStorageSettings, azureStorageSettings.ChatCommandTableName).Query<ChatCommandEntity>(c => c.PartitionKey == channelName.ToLower() && c.RowKey == command.ToLower()).FirstOrDefault();
-			return ToChatCommand(response);
+			if (response is not null)
+				return ToChatCommand(response, retrieveAliases ? ChatCommandAliasEntity.RetrieveForCommand(channelName, response.RowKey, azureStorageSettings) : null);
+			else
+				return default;
+		}
+
+		/// <summary>
+		/// Retrieves the <see cref="ChatCommand"/> by one of its aliases.
+		/// </summary>
+		/// <param name="channelName">Name of the channel whose chat commands to be retrieved.</param>
+		/// <param name="commandAlias">The command alias to filter on.</param>
+		/// <param name="azureStorageSettings">A <see cref="AzureStorageSettings"/> containing the Azure Storage connection details.</param>
+		/// <returns>A <see cref="ChatCommand"/> representing the chat command found by one of its aliases.</returns>
+		public static ChatCommand RetrieveByCommandAlias(string channelName, string commandAlias, AzureStorageSettings azureStorageSettings)
+		{
+			ChatCommandAliasEntity chatCommandAliasEntity = ChatCommandAliasEntity.Retrieve(channelName, commandAlias, azureStorageSettings);
+			if (chatCommandAliasEntity is not null)
+				return RetrieveByCommand(channelName, chatCommandAliasEntity.Command, azureStorageSettings);
+			else
+				return default;
 		}
 
 		/// <summary>
@@ -169,32 +165,36 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 				AzureStorageHelper.GetTableClient(azureStorageSettings, azureStorageSettings.ChatCommandTableName).UpsertEntity(this);
 		}
 
-		private static ChatCommand ToChatCommand(ChatCommandEntity input)
+		private static ChatCommand ToChatCommand(ChatCommandEntity chatCommandEntity, List<ChatCommandAliasEntity> chatCommandAliasEntities)
 		{
+			List<string> commandAliases = new();
+			if (chatCommandAliasEntities is not null)
+				foreach (var chatCommandAlias in chatCommandAliasEntities)
+					commandAliases.Add(chatCommandAlias.RowKey);
+
 			return new ChatCommand()
 			{
-				ChannelName = input.PartitionKey,
-				Command = input.RowKey,
-				CommandName = input.CommandName,
-				UserPermission = input.UserPermission,
-				Response = input.Response,
-				IsEnabledWhenStreaming = input.IsEnabledWhenStreaming,
-				IsEnabledWhenNotStreaming = input.IsEnabledWhenNotStreaming,
-				CommandResponseType = input.CommandResponseType,
-				UserCooldown = input.UserCooldown,
-				GlobalCooldown = input.GlobalCooldown,
-				CommandAliases = input.CommandAliases.Split('|').ToList()
+				ChannelName = chatCommandEntity.PartitionKey,
+				Command = chatCommandEntity.RowKey,
+				CommandName = chatCommandEntity.CommandName,
+				UserPermission = chatCommandEntity.UserPermission,
+				Response = chatCommandEntity.Response,
+				IsEnabledWhenStreaming = chatCommandEntity.IsEnabledWhenStreaming,
+				IsEnabledWhenNotStreaming = chatCommandEntity.IsEnabledWhenNotStreaming,
+				CommandResponseType = chatCommandEntity.CommandResponseType,
+				UserCooldown = chatCommandEntity.UserCooldown,
+				GlobalCooldown = chatCommandEntity.GlobalCooldown,
+				CommandAliases = commandAliases
 			};
 		}
 
-		private static List<ChatCommand> ToChatCommandList(List<ChatCommandEntity> input)
+		private static List<ChatCommand> ToChatCommandList(List<ChatCommandEntity> input, bool retrieveAliases, AzureStorageSettings azureStorageSettings)
 		{
 			List<ChatCommand> results = new();
 			foreach (var entity in input)
-				results.Add(ToChatCommand(entity));
+				results.Add(ToChatCommand(entity, retrieveAliases ? ChatCommandAliasEntity.RetrieveForCommand(entity.PartitionKey, entity.RowKey, azureStorageSettings) : null));
 			return results;
 		}
-
 
 	}
 

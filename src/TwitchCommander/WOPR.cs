@@ -26,6 +26,8 @@ namespace TaleLearnCode.TwitchCommander
 			_twitchSettings = twitchSettings;
 		}
 
+		#region Connect
+
 		/// <summary>
 		/// Connects to the specified Twitch channel.
 		/// </summary>
@@ -44,6 +46,7 @@ namespace TaleLearnCode.TwitchCommander
 
 			twitchClient.OnConnected += TwitchClient_OnConnected;
 			twitchClient.OnDisconnected += TwitchClient_OnDisconnected;
+			twitchClient.OnChatCommandReceived += TwitchClient_OnChatCommandRecieved;
 
 			twitchClient.Connect();
 
@@ -74,6 +77,10 @@ namespace TaleLearnCode.TwitchCommander
 			OnBotConnectedArgs onBotConnectedArgs = new(onConnectedArgs);
 			OnBotConnected.Invoke(this, onBotConnectedArgs);
 		}
+
+		#endregion
+
+		#region Disconnect
 
 		/// <summary>
 		/// Disconnects the instance from Twitch.
@@ -107,6 +114,10 @@ namespace TaleLearnCode.TwitchCommander
 			OnBotDisconnected.Invoke(this, onBotDisconnectedArgs);
 		}
 
+		#endregion
+
+		#region Logging
+
 		/// <summary>
 		/// Handles the <see cref="TwitchClient.OnLog"/> event.
 		/// </summary>
@@ -132,6 +143,17 @@ namespace TaleLearnCode.TwitchCommander
 		{
 			OnLoggedEvent.Invoke(this, new OnLoggedEventArgs(onLogArgs));
 		}
+
+		#endregion
+
+		#region Chat Commands
+
+		private void TwitchClient_OnChatCommandRecieved(object sender, OnChatCommandReceivedArgs e)
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion
 
 	}
 

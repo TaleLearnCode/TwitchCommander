@@ -42,6 +42,14 @@
 		/// </value>
 		public string ChatCommandTableName { get; set; }
 
+		/// <summary>
+		/// Gets or sets the name of the chat command aliases table.
+		/// </summary>
+		/// <value>
+		/// A <c>string</c> representing the name of the chat command aliases table.
+		/// </value>
+		public string ChatCommandAliasesTableName { get; set; }
+
 	}
 
 }

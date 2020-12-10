@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using TaleLearnCode.TwitchCommander;
 using TaleLearnCode.TwitchCommander.Events;
@@ -21,18 +22,28 @@ namespace TestClient
 		{
 			Initialize();
 			//TwitchClientTesting();
-			ChatCommandSavingTesting();
-			Console.ReadLine();
-			ChatCommandRetrievalTesting();
+			//ChatCommandSavingTesting("so");
+			//ChatCommandRetrieveListTesting();
+
+			for (int i = 0; i < 50; i++)
+			{
+				Console.WriteLine(i);
+				ChatCommandSavingTesting($"command{i}");
+			}
+			//ChatCommandRetrieveListTesting();
+
+			TestChatCommandRetrieval("command0");
+			TestChatCommandRetrieval("command25-3");
+			TestChatCommandRetrieval("mcnerdius");
 
 		}
 
-		private static void ChatCommandSavingTesting()
+		private static void ChatCommandSavingTesting(string command)
 		{
 			ChatCommand chatCommand = new()
 			{
 				ChannelName = "BricksWithChad",
-				Command = "so",
+				Command = command,
 				CommandName = "Shoutout",
 				UserPermission = UserPermission.Moderator,
 				Response = "Be sure to check out ${0} at https://twitch.tv/${0}",
@@ -41,16 +52,56 @@ namespace TestClient
 				CommandResponseType = CommandResponseType.Say,
 				UserCooldown = 0,
 				GlobalCooldown = 0,
-				CommandAliases = new List<string> { "so", "shoutout" }
+				//CommandAliases = new List<string> { "shoutout", "shoutout2", "shoutout3", "shoutout4", "shoutout5" }
+				CommandAliases = new List<string> { $"{command}-1", $"{command}-2", $"{command}-3", $"{command}-4", $"{command}-5" }
 			};
 			chatCommand.Save(_azureStorageSettings);
 		}
 
 		public static void ChatCommandRetrievalTesting()
 		{
-			ChatCommand chatCommand = ChatCommand.Retrieve("BricksWithChad", "so", _azureStorageSettings);
+			ChatCommand chatCommand = ChatCommand.RetrieveByCommand("BricksWithChad", "so", _azureStorageSettings);
 			Console.WriteLine(chatCommand.CommandName);
 		}
+
+		public static void ChatCommandRetrieveListTesting()
+		{
+
+			Stopwatch stopwatch = Stopwatch.StartNew();
+			List<ChatCommand> chatCommands = ChatCommand.Retrieve("BricksWithChad", _azureStorageSettings);
+			Dictionary<string, ChatCommand> chatCommandDictionary = new();
+			var retrievalTime = stopwatch.ElapsedMilliseconds;
+			stopwatch.Restart();
+			int index = 0;
+			foreach (var chatCommand in chatCommands)
+			{
+				index++;
+				Console.WriteLine(index);
+				chatCommandDictionary.Add(chatCommand.Command, chatCommand);
+				foreach (var commandAlias in chatCommand.CommandAliases)
+				{
+					chatCommandDictionary.Add(commandAlias, chatCommand);
+				}
+			}
+			var packagingTime = stopwatch.ElapsedMilliseconds;
+
+			Console.WriteLine($"Retrieval Time: {retrievalTime}");
+			Console.WriteLine($"Packaging Time: {packagingTime}");
+
+		}
+
+		public static void TestChatCommandRetrieval(string command)
+		{
+			ChatCommand chatCommand = ChatCommand.RetrieveByCommand("BricksWithChad", command, _azureStorageSettings);
+			if (chatCommand is null)
+				chatCommand = ChatCommand.RetrieveByCommandAlias("BricksWithChad", command, _azureStorageSettings);
+
+			if (chatCommand is not null)
+				Console.WriteLine(chatCommand.Response);
+			else
+				Console.WriteLine($"Command {command} not found");
+		}
+
 
 		private static void TwitchClientTesting()
 		{
