@@ -22,7 +22,7 @@ namespace TwitchBot
 
 		public Bot(TwitchSettings twitchSettings, AzureStorageSettings azureStorageSettings, StreamLabelSettings streamLabelSettings, TimerIntervalSettings timerIntervalSettings)
 		{
-		
+
 			_twitchSettings = twitchSettings;
 			_azureStorageSettings = azureStorageSettings;
 			_streamLabelSettings = streamLabelSettings;

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using TaleLearnCode.TwitchCommander;
 using TaleLearnCode.TwitchCommander.Events;
 using TaleLearnCode.TwitchCommander.Settings;
@@ -18,28 +19,38 @@ namespace TestClient
 		private static AzureStorageSettings _azureStorageSettings = new();
 		private static TwitchSettings _twitchSettings = new();
 
-		static void Main(string[] args)
+		static async Task Main(string[] args)
 		{
 			Initialize();
-			//TwitchClientTesting();
-			//ChatCommandSavingTesting("so");
-			//ChatCommandRetrieveListTesting();
+			await TwitchClientTestingAsync();
 
-			for (int i = 0; i < 50; i++)
-			{
-				Console.WriteLine(i);
-				ChatCommandSavingTesting($"command{i}");
-			}
-			//ChatCommandRetrieveListTesting();
 
-			TestChatCommandRetrieval("command0");
-			TestChatCommandRetrieval("command25-3");
-			TestChatCommandRetrieval("mcnerdius");
+			//ChatCommand chatCommand = new()
+			//{
+			//	ChannelName = "TaleLearnCode",
+			//	Command = "testsubscribers",
+			//	CommandName = "Testing Subscribers",
+			//	UserPermission = UserPermission.Moderator,
+			//	Response = "Be sure to check out {0} at https://twitch.tv/{0}",
+			//	IsEnabledWhenStreaming = true,
+			//	IsEnabledWhenNotStreaming = false,
+			//	CommandResponseType = CommandResponseType.Say,
+			//	UserCooldown = 0,
+			//	GlobalCooldown = 0//,
+			//	//CommandAliases = new List<string> { "shoutout" }
+			//};
+			//chatCommand.Save(_azureStorageSettings);
+
+
+
 
 		}
 
 		private static void ChatCommandSavingTesting(string command)
 		{
+
+
+
 			ChatCommand chatCommand = new()
 			{
 				ChannelName = "BricksWithChad",
@@ -103,22 +114,42 @@ namespace TestClient
 		}
 
 
-		private static void TwitchClientTesting()
+		private static async Task TwitchClientTestingAsync()
 		{
 
-			bool logEvents = true;
+			bool logEvents = false;
 
-			var wopr = new WOPR(_twitchSettings);
+			var wopr = new WOPR(_twitchSettings, _azureStorageSettings, logEvents);
 			if (logEvents) wopr.OnLoggedEvent += WOPR_OnLoggedEvent;
 			wopr.OnBotConnected += WOPR_OnBotConnected;
 			wopr.OnBotDisconnected += WOPR_OnBotDisconnected;
+			wopr.OnCommandReceived += WOPR_OnChatCommandReceived;
+			wopr.OnCommandNotPermitted += WOPR_OnCommandNotPermitted;
 
-			wopr.Connect("BricksWithChad", logEvents);
+			//wopr.Connect("BricksWithChad", logEvents);
+			await wopr.StartAsync(logEvents);
 
 			Console.ReadLine();
 
 			wopr.Disconnect();
 
+		}
+
+		private static void WOPR_OnCommandNotPermitted(object sender, OnCommandNotPermittedArgs e)
+		{
+			ConsoleHelper.PrintTextToConsole($"[{DateTime.UtcNow}]", ConsoleColor.Green);
+			Console.Write(" ");
+			ConsoleHelper.PrintTextToConsole($"[{e.ChatCommand.ChannelName}]", ConsoleColor.Cyan);
+			ConsoleHelper.PrintTextToConsole($"Command Not Permitted for [{e.ChatMessage.Username}] {e.ChatCommand.Command}", ConsoleColor.White, ConsoleColor.Red);
+			Console.Write("\n");
+		}
+
+		private static void WOPR_OnChatCommandReceived(object sender, OnCommandReceivedArgs e)
+		{
+			ConsoleHelper.PrintTextToConsole($"[{DateTime.UtcNow}]", ConsoleColor.Green);
+			Console.Write(" ");
+			ConsoleHelper.PrintTextToConsole($"[{e.ChatCommand.ChannelName}]", ConsoleColor.Cyan);
+			Console.Write($" {e.ReturnedMessage}\n");
 		}
 
 		private static void WOPR_OnLoggedEvent(object sender, OnLoggedEventArgs e)

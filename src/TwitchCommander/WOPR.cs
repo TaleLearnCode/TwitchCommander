@@ -1,6 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using TaleLearnCode.TwitchCommander.Events;
 using TaleLearnCode.TwitchCommander.Settings;
+using TwitchLib.Api;
+using TwitchLib.Api.Helix.Models.Subscriptions;
+using TwitchLib.Api.Services;
+using TwitchLib.Api.Services.Events.LiveStreamMonitor;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
@@ -12,19 +18,52 @@ namespace TaleLearnCode.TwitchCommander
 	public class WOPR
 	{
 
-		private static TwitchSettings _twitchSettings;
+		private readonly TwitchSettings _twitchSettings;
+		private readonly AzureStorageSettings _azureStorageSettings;
 
-		ConnectionCredentials credentials;
-		TwitchClient twitchClient = new();
+		private ConnectionCredentials credentials;
+		private TwitchClient _twitchClient = new();
+
+		private TwitchAPI _twitchAPI;
+		private LiveStreamMonitorService _twitchMonitor;
+
+		private List<string> _subscribers = new();
+
+		private bool _IsOnline;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="WOPR"/> class.
 		/// </summary>
 		/// <param name="twitchSettings">The twitch settings.</param>
-		public WOPR(TwitchSettings twitchSettings)
+		public WOPR(
+			TwitchSettings twitchSettings,
+			AzureStorageSettings azureStorageSettings,
+			bool logEvents)
 		{
 			_twitchSettings = twitchSettings;
+			_azureStorageSettings = azureStorageSettings;
 		}
+
+		public async Task StartAsync(bool logEvents)
+		{
+			ConnectTwitchClient(logEvents);
+			ConnectTwitchAPI();
+			ConfigureLiveMonitor();
+			await InitializeSubscriberListAsync();
+		}
+
+
+		public async Task InitializeSubscriberListAsync()
+		{
+			GetBroadcasterSubscriptionsResponse response = await _twitchAPI.Helix.Subscriptions.GetBroadcasterSubscriptions("431007586");
+			foreach (var subscription in response.Data)
+			{
+				if (!_subscribers.Contains(subscription.UserId)) _subscribers.Add(subscription.UserId);
+				Console.WriteLine($"{subscription.UserName} \t {subscription.UserId}");
+			}
+		}
+
+
 
 		#region Connect
 
@@ -34,22 +73,75 @@ namespace TaleLearnCode.TwitchCommander
 		/// <param name="channelName">Name of the Twitch channel to connect to.</param>
 		/// <param name="logEvents">If set to <c>true</c> then events will be logged.</param>
 		/// <returns></returns>
-		public void Connect(string channelName, bool logEvents)
+		private void ConnectTwitchClient(bool logEvents)
 		{
 
 			credentials = new ConnectionCredentials(_twitchSettings.ChannelName, _twitchSettings.AccessToken);
 
-			twitchClient.Initialize(credentials, channelName);
+			_twitchClient.Initialize(credentials, _twitchSettings.ChannelName);
 
 			if (logEvents)
-				twitchClient.OnLog += TwitchClient_OnLog;
+				_twitchClient.OnLog += TwitchClient_OnLog;
 
-			twitchClient.OnConnected += TwitchClient_OnConnected;
-			twitchClient.OnDisconnected += TwitchClient_OnDisconnected;
-			twitchClient.OnChatCommandReceived += TwitchClient_OnChatCommandRecieved;
+			_twitchClient.OnConnected += TwitchClient_OnConnected;
+			_twitchClient.OnDisconnected += TwitchClient_OnDisconnected;
+			_twitchClient.OnChatCommandReceived += TwitchClient_OnChatCommandRecieved;
+			_twitchClient.OnWhisperSent += TwitchClient_OnWhisperSent;
+			_twitchClient.OnNewSubscriber += TwitchClient_OnNewSubscriber;
+			_twitchClient.OnCommunitySubscription += TwitchClient_OnCommunitySubscription;
+			_twitchClient.OnGiftedSubscription += TwitchClient_OnGiftedSubscription;
+			_twitchClient.OnReSubscriber += TwitchClient_OnResubscriber;
 
-			twitchClient.Connect();
+			_twitchClient.Connect();
 
+		}
+
+		private void ConnectTwitchAPI()
+		{
+			_twitchAPI = new TwitchAPI();
+			_twitchAPI.Settings.ClientId = _twitchSettings.ClientId;
+			_twitchAPI.Settings.AccessToken = _twitchSettings.AccessToken;
+		}
+
+		private void ConfigureLiveMonitor()
+		{
+
+			// TODO Make the CheckInterval a setting
+			_twitchMonitor = new(_twitchAPI, 5);
+
+			_twitchMonitor.SetChannelsById(new List<string> { _twitchSettings.ChannelName });
+
+			_twitchMonitor.OnStreamOffline += TwitchMonitor_OnStreamOffline;
+			_twitchMonitor.OnStreamOnline += TwitchMonitor_OnStreamOnline;
+			_twitchMonitor.OnStreamUpdate += TwitchMonitor_OnStreamUpdate;
+
+			_twitchMonitor.Start();
+
+		}
+
+		private void TwitchMonitor_OnStreamUpdate(object sender, OnStreamUpdateArgs e)
+		{
+			//throw new NotImplementedException();
+			Console.WriteLine($"User Id: {e.Stream.UserId}");
+
+
+		}
+
+		private void TwitchMonitor_OnStreamOnline(object sender, OnStreamOnlineArgs e)
+		{
+			_IsOnline = true;
+			_ = InitializeSubscriberListAsync();
+		}
+
+		private void TwitchMonitor_OnStreamOffline(object sender, OnStreamOfflineArgs e)
+		{
+			_IsOnline = false;
+			_subscribers = new();
+		}
+
+		private void TwitchClient_OnWhisperSent(object sender, OnWhisperSentArgs e)
+		{
+			Console.WriteLine("Whisper Sent");
 		}
 
 		/// <summary>
@@ -87,7 +179,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// </summary>
 		public void Disconnect()
 		{
-			twitchClient.Disconnect();
+			_twitchClient.Disconnect();
 		}
 
 		/// <summary>
@@ -150,7 +242,119 @@ namespace TaleLearnCode.TwitchCommander
 
 		private void TwitchClient_OnChatCommandRecieved(object sender, OnChatCommandReceivedArgs e)
 		{
-			throw new NotImplementedException();
+
+			ChatCommand chatCommand = ChatCommand.RetrieveByCommand(_twitchSettings.ChannelName, e.Command.CommandText.ToLower(), _azureStorageSettings);
+			if (chatCommand is null)
+				chatCommand = ChatCommand.RetrieveByCommandAlias("BricksWithChad", e.Command.CommandText.ToLower(), _azureStorageSettings);
+
+			if (chatCommand is not null)
+			{
+				if (!UserPermittedToExecuteCommand(chatCommand, e.Command.ChatMessage))
+				{
+					InvokeOnCommandNotPermitted(e, chatCommand);
+				}
+				else
+				{
+					// TODO: Handle no argument coming in					
+					string responseMessage = string.Format(chatCommand.Response, e.Command.ArgumentsAsList.ToArray());
+
+					switch (chatCommand.CommandResponseType)
+					{
+						case CommandResponseType.Say:
+							_twitchClient.SendMessage(e.Command.ChatMessage.BotUsername, responseMessage);
+							break;
+						case CommandResponseType.Reply:
+							_twitchClient.SendMessage(e.Command.ChatMessage.BotUsername, $"@{e.Command.ChatMessage.Username}: {responseMessage}");
+							break;
+						case CommandResponseType.Whisper:
+							// TODO: Fix the whisper commands
+							_twitchClient.SendWhisper(e.Command.ChatMessage.UserId, responseMessage);
+							break;
+					}
+
+					InvokeOnCommandReceived(e, chatCommand, responseMessage);
+				}
+
+			}
+
+
+		}
+
+		private bool UserPermittedToExecuteCommand(ChatCommand chatCommand, ChatMessage chatMessage)
+		{
+
+			//if (
+			//	chatCommand.UserPermission == UserPermission.Everyone
+			//	|| (chatMessage.UserType == UserType.Broadcaster)
+			//	|| (chatMessage.UserType == UserType.Moderator && chatCommand.UserPermission <= UserPermission.Moderator))
+			//	return true;
+			//else
+
+
+			if (chatCommand.UserPermission <= UserPermission.Subscriber && _subscribers.Contains(chatMessage.UserId))
+				return true;
+			else
+				return false;
+
+
+
+			//Subscriber,
+			//Regular,
+			//VIP,
+		}
+
+		/// <summary>
+		/// Raised when the bot received a chat command.
+		/// </summary>
+		public EventHandler<OnCommandReceivedArgs> OnCommandReceived;
+
+		/// <summary>
+		/// Invokes the <see cref="OnCommandReceived"/> event.
+		/// </summary>
+		/// <param name="onChatCommandReceivedArgs">The on chat command received arguments.</param>
+		/// <param name="chatCommand">The chat command.</param>
+		/// <param name="returnedMessage">The returned message.</param>
+		private void InvokeOnCommandReceived(OnChatCommandReceivedArgs onChatCommandReceivedArgs, ChatCommand chatCommand, string returnedMessage)
+		{
+			OnCommandReceived.Invoke(this, new OnCommandReceivedArgs(onChatCommandReceivedArgs, chatCommand, returnedMessage));
+		}
+
+		public EventHandler<OnCommandNotPermittedArgs> OnCommandNotPermitted;
+
+		private void InvokeOnCommandNotPermitted(OnChatCommandReceivedArgs onChatCommandReceivedArgs, ChatCommand chatCommand)
+		{
+			OnCommandNotPermitted.Invoke(this, new OnCommandNotPermittedArgs(onChatCommandReceivedArgs, chatCommand));
+		}
+
+
+		#endregion
+
+		#region Subscriptions
+
+		private void TwitchClient_OnResubscriber(object sender, OnReSubscriberArgs e)
+		{
+			ManageSubscribers(e.ReSubscriber.UserId);
+		}
+
+		private void TwitchClient_OnGiftedSubscription(object sender, OnGiftedSubscriptionArgs e)
+		{
+			ManageSubscribers(e.GiftedSubscription.UserId);
+		}
+
+		private void TwitchClient_OnCommunitySubscription(object sender, OnCommunitySubscriptionArgs e)
+		{
+			ManageSubscribers(e.GiftedSubscription.UserId);
+		}
+
+		private void TwitchClient_OnNewSubscriber(object sender, OnNewSubscriberArgs e)
+		{
+			ManageSubscribers(e.Subscriber.UserId);
+		}
+
+		private void ManageSubscribers(string userId)
+		{
+			if (!_subscribers.Contains(userId))
+				_subscribers.Add(userId);
 		}
 
 		#endregion

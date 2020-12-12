@@ -39,7 +39,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// <value>
 		/// A <c>string</c> representing the minimum permission level required to execute the command.
 		/// </value>
-		public UserPermission UserPermission { get; set; }
+		public UserPermission UserPermission { get; set; }  // TODO: Test Functionality
 
 		/// <summary>
 		/// Gets or sets the template used for the formatted responses of the command.
@@ -55,7 +55,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// <value>
 		///   <c>true</c> if this command is enabled when streaming; otherwise, <c>false</c>.
 		/// </value>
-		public bool IsEnabledWhenStreaming { get; set; }
+		public bool IsEnabledWhenStreaming { get; set; }  // TODO: Test Functionality
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this command is enabled when not streaming.
@@ -63,7 +63,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// <value>
 		///   <c>true</c> if this command is enabled when not streaming; otherwise, <c>false</c>.
 		/// </value>
-		public bool IsEnabledWhenNotStreaming { get; set; }
+		public bool IsEnabledWhenNotStreaming { get; set; }  // TODO: Test Functionality
 
 		/// <summary>
 		/// Gets or sets the type of the response the command uses.
@@ -79,7 +79,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// <value>
 		/// A <c>int</c> representing the cooldown period for the user in seconds.
 		/// </value>
-		public int UserCooldown { get; set; }
+		public int UserCooldown { get; set; }  // TODO: Test Functionality
 
 		/// <summary>
 		/// Gets or sets the number of seconds to wait before allowing anyone to use the command again.
@@ -87,7 +87,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// <value>
 		/// A <c>int</c> representing the cooldown for everyone in seconds.
 		/// </value>
-		public int GlobalCooldown { get; set; }
+		public int GlobalCooldown { get; set; } // TODO: Test Functionality
 
 		/// <summary>
 		/// Gets or sets the aliases for the command text.
