@@ -15,10 +15,6 @@
 		/// </summary>
 		Subscriber,
 		/// <summary>
-		/// Only regulars or above have permission to perform a task.
-		/// </summary>
-		Regular,
-		/// <summary>
 		/// Only VIPs or above have permission to perform a task.
 		/// </summary>
 		VIP,

@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using TaleLearnCode.TwitchCommander.Events;
 using TaleLearnCode.TwitchCommander.Settings;
 using TwitchLib.Api;
-using TwitchLib.Api.Helix.Models.Subscriptions;
 using TwitchLib.Api.Services;
 using TwitchLib.Api.Services.Events.LiveStreamMonitor;
 using TwitchLib.Client;
@@ -27,8 +26,6 @@ namespace TaleLearnCode.TwitchCommander
 		private TwitchAPI _twitchAPI;
 		private LiveStreamMonitorService _twitchMonitor;
 
-		private List<string> _subscribers = new();
-
 		private bool _IsOnline;
 
 		/// <summary>
@@ -49,59 +46,9 @@ namespace TaleLearnCode.TwitchCommander
 			ConnectTwitchClient(logEvents);
 			ConnectTwitchAPI();
 			ConfigureLiveMonitor();
-			await InitializeSubscriberListAsync();
 		}
 
-
-		public async Task InitializeSubscriberListAsync()
-		{
-			GetBroadcasterSubscriptionsResponse response = await _twitchAPI.Helix.Subscriptions.GetBroadcasterSubscriptions("431007586");
-			foreach (var subscription in response.Data)
-			{
-				if (!_subscribers.Contains(subscription.UserId)) _subscribers.Add(subscription.UserId);
-				Console.WriteLine($"{subscription.UserName} \t {subscription.UserId}");
-			}
-		}
-
-
-
-		#region Connect
-
-		/// <summary>
-		/// Connects to the specified Twitch channel.
-		/// </summary>
-		/// <param name="channelName">Name of the Twitch channel to connect to.</param>
-		/// <param name="logEvents">If set to <c>true</c> then events will be logged.</param>
-		/// <returns></returns>
-		private void ConnectTwitchClient(bool logEvents)
-		{
-
-			credentials = new ConnectionCredentials(_twitchSettings.ChannelName, _twitchSettings.AccessToken);
-
-			_twitchClient.Initialize(credentials, _twitchSettings.ChannelName);
-
-			if (logEvents)
-				_twitchClient.OnLog += TwitchClient_OnLog;
-
-			_twitchClient.OnConnected += TwitchClient_OnConnected;
-			_twitchClient.OnDisconnected += TwitchClient_OnDisconnected;
-			_twitchClient.OnChatCommandReceived += TwitchClient_OnChatCommandRecieved;
-			_twitchClient.OnWhisperSent += TwitchClient_OnWhisperSent;
-			_twitchClient.OnNewSubscriber += TwitchClient_OnNewSubscriber;
-			_twitchClient.OnCommunitySubscription += TwitchClient_OnCommunitySubscription;
-			_twitchClient.OnGiftedSubscription += TwitchClient_OnGiftedSubscription;
-			_twitchClient.OnReSubscriber += TwitchClient_OnResubscriber;
-
-			_twitchClient.Connect();
-
-		}
-
-		private void ConnectTwitchAPI()
-		{
-			_twitchAPI = new TwitchAPI();
-			_twitchAPI.Settings.ClientId = _twitchSettings.ClientId;
-			_twitchAPI.Settings.AccessToken = _twitchSettings.AccessToken;
-		}
+		#region TwitchMonitor
 
 		private void ConfigureLiveMonitor()
 		{
@@ -130,18 +77,51 @@ namespace TaleLearnCode.TwitchCommander
 		private void TwitchMonitor_OnStreamOnline(object sender, OnStreamOnlineArgs e)
 		{
 			_IsOnline = true;
-			_ = InitializeSubscriberListAsync();
 		}
 
 		private void TwitchMonitor_OnStreamOffline(object sender, OnStreamOfflineArgs e)
 		{
 			_IsOnline = false;
-			_subscribers = new();
 		}
 
-		private void TwitchClient_OnWhisperSent(object sender, OnWhisperSentArgs e)
+		#endregion
+
+
+		#region Connect
+
+		/// <summary>
+		/// Connects to the specified Twitch channel.
+		/// </summary>
+		/// <param name="channelName">Name of the Twitch channel to connect to.</param>
+		/// <param name="logEvents">If set to <c>true</c> then events will be logged.</param>
+		/// <returns></returns>
+		private void ConnectTwitchClient(bool logEvents)
 		{
-			Console.WriteLine("Whisper Sent");
+
+			credentials = new ConnectionCredentials(_twitchSettings.ChannelName, _twitchSettings.AccessToken);
+
+			_twitchClient.Initialize(credentials, _twitchSettings.ChannelName);
+
+			if (logEvents)
+				_twitchClient.OnLog += TwitchClient_OnLog;
+
+			_twitchClient.OnConnected += TwitchClient_OnConnected;
+			_twitchClient.OnDisconnected += TwitchClient_OnDisconnected;
+			_twitchClient.OnChatCommandReceived += TwitchClient_OnChatCommandRecieved;
+			_twitchClient.OnNewSubscriber += TwitchClient_OnNewSubscriber;
+			_twitchClient.OnCommunitySubscription += TwitchClient_OnCommunitySubscription;
+			_twitchClient.OnGiftedSubscription += TwitchClient_OnGiftedSubscription;
+			_twitchClient.OnReSubscriber += TwitchClient_OnResubscriber;
+
+			_twitchClient.Connect();
+
+		}
+
+		private void ConnectTwitchAPI()
+		{
+			_twitchAPI = new TwitchAPI();
+			_twitchAPI.Settings.ClientId = _twitchSettings.ClientId;
+			_twitchAPI.Settings.AccessToken = _twitchSettings.AccessToken;
 		}
 
 		/// <summary>
@@ -282,25 +262,25 @@ namespace TaleLearnCode.TwitchCommander
 
 		private bool UserPermittedToExecuteCommand(ChatCommand chatCommand, ChatMessage chatMessage)
 		{
-
-			//if (
-			//	chatCommand.UserPermission == UserPermission.Everyone
-			//	|| (chatMessage.UserType == UserType.Broadcaster)
-			//	|| (chatMessage.UserType == UserType.Moderator && chatCommand.UserPermission <= UserPermission.Moderator))
-			//	return true;
-			//else
-
-
-			if (chatCommand.UserPermission <= UserPermission.Subscriber && _subscribers.Contains(chatMessage.UserId))
-				return true;
-			else
-				return false;
-
-
-
-			//Subscriber,
-			//Regular,
-			//VIP,
+			switch (chatCommand.UserPermission)
+			{
+				case UserPermission.Broadcaster:
+					if (chatMessage.IsBroadcaster) return true;
+					return false;
+				case UserPermission.Moderator:
+					if (chatMessage.IsBroadcaster || chatMessage.IsModerator) return true;
+					return false;
+				case UserPermission.VIP:
+					if (chatMessage.IsBroadcaster || chatMessage.IsModerator || chatMessage.IsVip) return true;
+					return false;
+				case UserPermission.Subscriber:
+					if (chatMessage.IsBroadcaster || chatMessage.IsModerator || chatMessage.IsSubscriber) return true;
+					return false;
+				case UserPermission.Everyone:
+					return true;
+				default:
+					return false;
+			}
 		}
 
 		/// <summary>
@@ -333,28 +313,22 @@ namespace TaleLearnCode.TwitchCommander
 
 		private void TwitchClient_OnResubscriber(object sender, OnReSubscriberArgs e)
 		{
-			ManageSubscribers(e.ReSubscriber.UserId);
+			throw new NotImplementedException();
 		}
 
 		private void TwitchClient_OnGiftedSubscription(object sender, OnGiftedSubscriptionArgs e)
 		{
-			ManageSubscribers(e.GiftedSubscription.UserId);
+			throw new NotImplementedException();
 		}
 
 		private void TwitchClient_OnCommunitySubscription(object sender, OnCommunitySubscriptionArgs e)
 		{
-			ManageSubscribers(e.GiftedSubscription.UserId);
+			throw new NotImplementedException();
 		}
 
 		private void TwitchClient_OnNewSubscriber(object sender, OnNewSubscriberArgs e)
 		{
-			ManageSubscribers(e.Subscriber.UserId);
-		}
-
-		private void ManageSubscribers(string userId)
-		{
-			if (!_subscribers.Contains(userId))
-				_subscribers.Add(userId);
+			throw new NotImplementedException();
 		}
 
 		#endregion
