@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 using TaleLearnCode.TwitchCommander;
 using TaleLearnCode.TwitchCommander.Events;
 using TaleLearnCode.TwitchCommander.Settings;
@@ -14,15 +13,15 @@ namespace TestClient
 	{
 
 		private static IConfigurationRoot _config;
-		private static StreamLabelSettings _streamLabelSettings = new();
-		private static TimerIntervalSettings _timerIntervalSettings = new();
-		private static AzureStorageSettings _azureStorageSettings = new();
-		private static TwitchSettings _twitchSettings = new();
+		private static readonly StreamLabelSettings _streamLabelSettings = new();
+		private static readonly TimerIntervalSettings _timerIntervalSettings = new();
+		private static readonly AzureStorageSettings _azureStorageSettings = new();
+		private static readonly TwitchSettings _twitchSettings = new();
 
-		static async Task Main(string[] args)
+		static void Main()
 		{
 			Initialize();
-			await TwitchClientTestingAsync();
+			TwitchClientTesting();
 
 
 			//ChatCommand chatCommand = new()
@@ -114,7 +113,7 @@ namespace TestClient
 		}
 
 
-		private static async Task TwitchClientTestingAsync()
+		private static void TwitchClientTesting()
 		{
 
 			bool logEvents = false;
@@ -127,7 +126,7 @@ namespace TestClient
 			wopr.OnCommandNotPermitted += WOPR_OnCommandNotPermitted;
 
 			//wopr.Connect("BricksWithChad", logEvents);
-			await wopr.StartAsync(logEvents);
+			wopr.Start();
 
 			Console.ReadLine();
 

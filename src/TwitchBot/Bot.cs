@@ -32,7 +32,7 @@ namespace TwitchBot
 
 		// TwitchTokenGenerator.com
 		ConnectionCredentials credentials;// = new ConnectionCredentials(_twitchSettings.ChannelName, _twitchSettings.AccessToken);
-		TwitchClient twitchClient = new TwitchClient();
+		readonly TwitchClient twitchClient = new();
 
 		private LegoStats _legoStats;
 		private Timer _botTimer = default;
