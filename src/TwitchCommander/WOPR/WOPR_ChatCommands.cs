@@ -28,6 +28,12 @@ namespace TaleLearnCode.TwitchCommander
 				}
 				else
 				{
+
+					if (_IsOnline && !chatCommand.IsEnabledWhenStreaming)
+						_twitchClient.SendMessage(e.Command.ChatMessage.BotUsername, $"The {chatCommand.CommandName} is not available while {e.Command.ChatMessage.Channel} is broadcasting.");
+					if (!_IsOnline && !chatCommand.IsEnabledWhenNotStreaming)
+						_twitchClient.SendMessage(e.Command.ChatMessage.BotUsername, $"The {chatCommand.CommandName} is only available when {e.Command.ChatMessage.Channel} is broadcasting.");
+
 					// TODO: Handle no argument coming in					
 					string responseMessage = string.Format(chatCommand.Response, e.Command.ArgumentsAsList.ToArray());
 
