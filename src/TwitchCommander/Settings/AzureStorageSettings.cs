@@ -50,6 +50,14 @@
 		/// </value>
 		public string ChatCommandAliasesTableName { get; set; }
 
+		/// <summary>
+		/// Gets or sets the name of the chat command activity table.
+		/// </summary>
+		/// <value>
+		/// A <c>string</c> representing the name of the chat command activity table.
+		/// </value>
+		public string ChatCommandActivityTableName { get; set; }
+
 	}
 
 }

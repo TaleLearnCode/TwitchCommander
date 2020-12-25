@@ -4,6 +4,7 @@
     "AccountName": "sttwitchwatcher",
     "AccountKey": "Z1dhnjBtkG4kRvYDFVltwAjgXeH3hbHhIN0h9qCGv/6TXSDEAfsYTFlf+Zrvj5aPRfMYaFApnowZl6l+fTPByg==",
     "ChatCommandTableName": "ChatCommands",
-    "ChatCommandAliasesTableName": "ChatCommandAliases"
+    "ChatCommandAliasesTableName": "ChatCommandAliases",
+    "ChatCommandActivityTableName":  "ChatCommandActivityLog"
   }
 }
