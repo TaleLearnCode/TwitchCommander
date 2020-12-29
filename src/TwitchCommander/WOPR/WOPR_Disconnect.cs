@@ -36,7 +36,7 @@ namespace TaleLearnCode.TwitchCommander
 		private void RaiseOnBotDisconnected()
 		{
 			OnBotDisconnectedArgs onBotDisconnectedArgs = new(_twitchSettings.ChannelName);
-			OnBotDisconnected.Invoke(this, onBotDisconnectedArgs);
+			OnBotDisconnected?.Invoke(this, onBotDisconnectedArgs);
 		}
 
 	}

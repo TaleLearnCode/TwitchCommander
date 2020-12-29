@@ -79,7 +79,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// <value>
 		/// A <c>int</c> representing the cooldown period for the user in seconds.
 		/// </value>
-		public int UserCooldown { get; set; }  // TODO: Test Functionality
+		public int UserCooldown { get; set; }
 
 		/// <summary>
 		/// Gets or sets the number of seconds to wait before allowing anyone to use the command again.
@@ -87,7 +87,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// <value>
 		/// A <c>int</c> representing the cooldown for everyone in seconds.
 		/// </value>
-		public int GlobalCooldown { get; set; } // TODO: Test Functionality
+		public int GlobalCooldown { get; set; }
 
 		/// <summary>
 		/// Gets or sets the aliases for the command text.

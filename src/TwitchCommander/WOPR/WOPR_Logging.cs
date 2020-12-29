@@ -30,7 +30,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// <returns></returns>
 		private void RaiseOnLoggedEvent(OnLogArgs onLogArgs)
 		{
-			OnLoggedEvent.Invoke(this, new OnLoggedEventArgs(onLogArgs));
+			OnLoggedEvent?.Invoke(this, new OnLoggedEventArgs(onLogArgs));
 		}
 
 

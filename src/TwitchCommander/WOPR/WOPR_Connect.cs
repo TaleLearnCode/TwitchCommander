@@ -31,7 +31,7 @@ namespace TaleLearnCode.TwitchCommander
 		private void RaiseOnBotConnected(OnConnectedArgs onConnectedArgs)
 		{
 			OnBotConnectedArgs onBotConnectedArgs = new(onConnectedArgs);
-			OnBotConnected.Invoke(this, onBotConnectedArgs);
+			OnBotConnected?.Invoke(this, onBotConnectedArgs);
 		}
 
 	}

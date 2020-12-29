@@ -127,7 +127,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// <param name="returnedMessage">A <c>string</c> representing the message sent back to chat.</param>
 		private void InvokeOnCommandReceived(OnChatCommandReceivedArgs onChatCommandReceivedArgs, ChatCommand chatCommand, string returnedMessage)
 		{
-			OnCommandReceived.Invoke(this, new OnCommandReceivedArgs(onChatCommandReceivedArgs, chatCommand, returnedMessage));
+			OnCommandReceived?.Invoke(this, new OnCommandReceivedArgs(onChatCommandReceivedArgs, chatCommand, returnedMessage));
 		}
 
 		/// <summary>
@@ -143,7 +143,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// <returns></returns>
 		private void InvokeOnCommandNotPermitted(OnChatCommandReceivedArgs onChatCommandReceivedArgs, ChatCommand chatCommand)
 		{
-			OnCommandNotPermitted.Invoke(this, new OnCommandNotPermittedArgs(onChatCommandReceivedArgs, chatCommand));
+			OnCommandNotPermitted?.Invoke(this, new OnCommandNotPermittedArgs(onChatCommandReceivedArgs, chatCommand));
 		}
 
 		public EventHandler<OnChatCommandTimedOutArgs> OnChatCommandTimedOut;
