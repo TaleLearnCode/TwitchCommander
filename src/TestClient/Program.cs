@@ -124,6 +124,7 @@ namespace TestClient
 			wopr.OnBotDisconnected += WOPR_OnBotDisconnected;
 			wopr.OnCommandReceived += WOPR_OnChatCommandReceived;
 			wopr.OnCommandNotPermitted += WOPR_OnCommandNotPermitted;
+			wopr.OnChatCommandTimedOut += WOPR_OnChatCommandTimedOut;
 
 			//wopr.Connect("BricksWithChad", logEvents);
 			wopr.Start();
@@ -132,6 +133,11 @@ namespace TestClient
 
 			wopr.Disconnect();
 
+		}
+
+		private static void WOPR_OnChatCommandTimedOut(object sender, OnChatCommandTimedOutArgs e)
+		{
+			ConsoleHelper.PrintMessageToConsole($"[{e.LastCommandActivity.Chatter}] {e.CommandTimeoutType} time out for the \'{e.ChatCommand.CommandName}'\'.", ConsoleColor.DarkYellow);
 		}
 
 		private static void WOPR_OnCommandNotPermitted(object sender, OnCommandNotPermittedArgs e)

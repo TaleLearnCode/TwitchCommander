@@ -2,6 +2,7 @@
 using Azure.Data.Tables;
 using System;
 using System.Linq;
+using TaleLearnCode.TwitchCommander.Exceptions;
 using TaleLearnCode.TwitchCommander.Extensions;
 using TaleLearnCode.TwitchCommander.Helpers;
 using TaleLearnCode.TwitchCommander.Models;
@@ -114,7 +115,7 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 		public void Save(AzureStorageSettings azureStorageSettings)
 		{
 			if (azureStorageSettings is null) throw new ArgumentNullException(nameof(azureStorageSettings));
-			if (string.IsNullOrWhiteSpace(azureStorageSettings.ChatCommandActivityTableName)) throw new ArgumentNullException(nameof(azureStorageSettings.ChatCommandActivityTableName));
+			if (string.IsNullOrWhiteSpace(azureStorageSettings.ChatCommandActivityTableName)) throw new SettingMissingException(nameof(azureStorageSettings.ChatCommandActivityTableName));
 			if (string.IsNullOrWhiteSpace(PartitionKey))
 				throw new Exception("The PartitionKey value must be specified.");
 			else if (string.IsNullOrWhiteSpace(RowKey))
@@ -141,7 +142,7 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 				string command,
 				string request,
 				string response,
-				DateTime? requestedDateTime = null,
+				DateTime? requestedDateTime,
 				ChatCommandResult chatCommandResult = ChatCommandResult.Executed)
 		{
 			DateTime dateTime = (requestedDateTime != null) ? (DateTime)requestedDateTime : DateTime.UtcNow;
@@ -150,6 +151,7 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 				PartitionKey = BuildPartitionKey(channel, command),
 				RowKey = dateTime.ToUnixTimeMilliseconds().ToString(),
 				Channel = channel,
+				Chatter = chatter,
 				Command = command,
 				RequestTime = dateTime.ToUnixTimeSeconds(),
 				ChatCommandResult = chatCommandResult,
@@ -158,6 +160,31 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 			};
 			chatCommandActivityEntity.Save(azureStorageSettings);
 		}
+
+		public static void Save(
+			AzureStorageSettings azureStorageSettings,
+				string channel,
+				string chatter,
+				string command,
+				string request,
+				string response,
+				double requestedDateTime,
+				ChatCommandResult chatCommandResult)
+		{
+			Save(azureStorageSettings, channel, chatter, command, request, response, DateTimeExtensions.UnixTimeInSecondsToDateTime(requestedDateTime), chatCommandResult);
+		}
+
+		public static void Save(
+			AzureStorageSettings azureStorageSettings,
+			string channel,
+			string chatter,
+			string command,
+			string request,
+			string response)
+		{
+			Save(azureStorageSettings, channel, chatter, command, request, response, DateTime.UtcNow, ChatCommandResult.Executed);
+		}
+
 
 		/// <summary>
 		/// Converts the instance to a <see cref="ChatCommandActivity"/> instance.
@@ -177,13 +204,17 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 			};
 		}
 
-		public static ChatCommandActivity GetLastCommandRequest(AzureStorageSettings azureStorageSettings, string channelName, string commandName, string chatterName = "")
+		public static ChatCommandActivity GetLastCommandRequest(
+			AzureStorageSettings azureStorageSettings,
+			string channelName,
+			string commandName,
+			string chatterName = "")
 		{
 
 			if (azureStorageSettings == null) throw new ArgumentNullException(nameof(azureStorageSettings));
 
 			ChatCommandActivityEntity response = null;
-			if (string.IsNullOrWhiteSpace(chatterName))
+			if (!string.IsNullOrWhiteSpace(chatterName))
 				response = AzureStorageHelper.GetTableClient(azureStorageSettings, azureStorageSettings.ChatCommandActivityTableName)
 					.Query<ChatCommandActivityEntity>(c => c.PartitionKey == BuildPartitionKey(channelName, commandName) && c.Chatter == chatterName.ToLower())
 					.OrderBy(c => c.RowKey)

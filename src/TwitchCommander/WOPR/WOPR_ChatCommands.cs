@@ -1,5 +1,8 @@
 ﻿using System;
+using TaleLearnCode.TwitchCommander.AzureStorage;
 using TaleLearnCode.TwitchCommander.Events;
+using TaleLearnCode.TwitchCommander.Extensions;
+using TaleLearnCode.TwitchCommander.Models;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
 
@@ -26,6 +29,14 @@ namespace TaleLearnCode.TwitchCommander
 				{
 					InvokeOnCommandNotPermitted(e, chatCommand);
 				}
+				else if (chatCommand.GlobalCooldown > 0 && IsCommandTimedOut(chatCommand, ChatCommandTimeoutType.Global, e.Command.ChatMessage.Username, e.Command.ChatMessage.Message))
+				{
+					// Globally timed out - ignore the chat command (event raised in IsCommandTimedOut)
+				}
+				else if (chatCommand.UserCooldown > 0 && IsCommandTimedOut(chatCommand, ChatCommandTimeoutType.Chatter, e.Command.ChatMessage.Username, e.Command.ChatMessage.Message))
+				{
+					// Timed out for the user - ignore the chat command (event raised in IsCommandTimedOut)
+				}
 				else
 				{
 
@@ -51,6 +62,7 @@ namespace TaleLearnCode.TwitchCommander
 							break;
 					}
 
+					ChatCommandActivityEntity.Save(_azureStorageSettings, _twitchSettings.ChannelName, e.Command.ChatMessage.Username, chatCommand.CommandName, e.Command.ChatMessage.Message, responseMessage);
 					InvokeOnCommandReceived(e, chatCommand, responseMessage);
 				}
 
@@ -88,6 +100,20 @@ namespace TaleLearnCode.TwitchCommander
 			}
 		}
 
+		private bool IsCommandTimedOut(ChatCommand chatCommand, ChatCommandTimeoutType chatCommandTimeoutType, string chatter, string request)
+		{
+			ChatCommandActivity chatCommandActivity = ChatCommandActivityEntity.GetLastCommandRequest(_azureStorageSettings, _twitchSettings.ChannelName, chatCommand.CommandName, chatter);
+			bool timedOut = false;
+			if (chatCommandActivity != null)
+				timedOut = chatCommandActivity.RequestTime + ((chatCommandTimeoutType == ChatCommandTimeoutType.Global) ? chatCommand.GlobalCooldown : chatCommand.UserCooldown) >= DateTime.UtcNow.ToUnixTimeSeconds();
+			if (timedOut)
+			{
+				ChatCommandActivityEntity.Save(_azureStorageSettings, _twitchSettings.ChannelName, chatter, chatCommand.CommandName, request, string.Empty, chatCommandActivity.RequestTime, ChatCommandResult.GlobalCooldown);
+				InvokeOnChatCommandTimedOut(chatCommand, chatCommandActivity, chatCommandTimeoutType);
+			}
+			return timedOut;
+		}
+
 		/// <summary>
 		/// Raised when the bot receives a chat command.
 		/// </summary>
@@ -118,6 +144,14 @@ namespace TaleLearnCode.TwitchCommander
 		private void InvokeOnCommandNotPermitted(OnChatCommandReceivedArgs onChatCommandReceivedArgs, ChatCommand chatCommand)
 		{
 			OnCommandNotPermitted.Invoke(this, new OnCommandNotPermittedArgs(onChatCommandReceivedArgs, chatCommand));
+		}
+
+		public EventHandler<OnChatCommandTimedOutArgs> OnChatCommandTimedOut;
+
+		private void InvokeOnChatCommandTimedOut(ChatCommand chatCommand, ChatCommandActivity chatCommandActivity, ChatCommandTimeoutType chatCommandTimeoutType)
+		{
+			var x = new OnChatCommandTimedOutArgs(chatCommand, chatCommandActivity, chatCommandTimeoutType);
+			OnChatCommandTimedOut?.Invoke(this, x);
 		}
 
 	}

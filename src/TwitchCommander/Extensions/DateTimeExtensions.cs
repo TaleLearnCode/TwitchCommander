@@ -29,6 +29,26 @@ namespace TaleLearnCode.TwitchCommander.Extensions
 			return new DateTimeOffset(input).ToUnixTimeMilliseconds();
 		}
 
+		/// <summary>
+		/// Return the UTC date/time for the specified Unix time (expressed in seconds).
+		/// </summary>
+		/// <param name="unixTime">The Unix time expressed in seconds.</param>
+		/// <returns>A <see cref="DateTime"/> representing the UTC date/time for the specified Unix time.</returns>
+		public static DateTime UnixTimeInSecondsToDateTime(double unixTime)
+		{
+			return DateTimeOffset.FromUnixTimeSeconds((long)unixTime).UtcDateTime;
+		}
+
+		/// <summary>
+		/// Return the UTC date/time for the specified Unix time (expressed in milliseconds).
+		/// </summary>
+		/// <param name="unixTime">The Unix time expressed in milliseconds.</param>
+		/// <returns>A <see cref="DateTime"/> representing the UTC date/time for the specified Unix time.</returns>
+		public static DateTime UnixTimeInMillisecondsToDateTIme(double unixTime)
+		{
+			return DateTimeOffset.FromUnixTimeMilliseconds((long)unixTime).UtcDateTime;
+		}
+
 	}
 
 }

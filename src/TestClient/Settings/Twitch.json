@@ -1,14 +1,14 @@
 {
   "Twitch": {
-    //"AccessToken": "gqvaorg2czwbewe7hr4oqx91jspenu",
-    //"RefreshToken": "vd0rzxacxlg7r6gpz7td9595ikbjeynvv4dbkddm10a8olkqeq",
-    //"ClientId": "gp762nuuoqcoxypju8c569th9wz7q5",
-    //"ChannelName": "BricksWithChad"
-
-    "AccessToken": "lirwuyfnibcygnoqakokzqte0dlkgj",
-    "RefreshToken": "u9jcsq0o4u6s0hyz8yl6vgkdxfz3lnj3f3rn0z3tffg3kq3773",
+    "AccessToken": "gqvaorg2czwbewe7hr4oqx91jspenu",
+    "RefreshToken": "vd0rzxacxlg7r6gpz7td9595ikbjeynvv4dbkddm10a8olkqeq",
     "ClientId": "gp762nuuoqcoxypju8c569th9wz7q5",
-    "ChannelName": "TaleLearnCode"
+    "ChannelName": "BricksWithChad"
+
+    //"AccessToken": "lirwuyfnibcygnoqakokzqte0dlkgj",
+    //"RefreshToken": "u9jcsq0o4u6s0hyz8yl6vgkdxfz3lnj3f3rn0z3tffg3kq3773",
+    //"ClientId": "gp762nuuoqcoxypju8c569th9wz7q5",
+    //"ChannelName": "TaleLearnCode"
 
 
   }
