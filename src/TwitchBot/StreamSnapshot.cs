@@ -29,7 +29,7 @@ namespace TwitchBot
 
 		public StreamSnapshot() { }
 
-		public StreamSnapshot(Stream stream, TwitchAPI twitchAPI)
+		public StreamSnapshot(Stream stream)
 		{
 
 			StreamId = stream.Id;

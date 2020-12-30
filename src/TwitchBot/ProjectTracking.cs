@@ -41,7 +41,7 @@ namespace TwitchBot
 			return tableClient;
 		}
 
-		private TableClient GetTableClient()
+		private static TableClient GetTableClient()
 		{
 			return GetTableClient(_azureStorageSettings);
 		}

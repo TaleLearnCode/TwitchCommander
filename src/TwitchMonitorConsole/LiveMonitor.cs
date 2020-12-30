@@ -16,7 +16,7 @@ namespace TwitchMonitor
 		private LiveStreamMonitorService Monitor;
 		private TwitchAPI API;
 
-		private TableClient tableClient;
+		private readonly TableClient tableClient;
 
 		public LiveMonitor()
 		{
@@ -82,7 +82,7 @@ namespace TwitchMonitor
 		private void Monitor_OnStreamUpdate(object sender, OnStreamUpdateArgs e)
 		{
 
-			var snapshot = new StreamSnapshot(e.Stream, API);
+			var snapshot = new StreamSnapshot(e.Stream);
 
 			tableClient.AddEntity(snapshot);
 			Console.WriteLine($"Stored Snapshop {snapshot.RowKey}");

@@ -10,7 +10,7 @@ namespace TwitchBot.Commands
 	public class LegoStats
 	{
 
-		TwitchClient _twitchClient;
+		private readonly TwitchClient _twitchClient;
 		private int _bricksDropped = 0;
 		private int _oofs = 0;
 		private string _streamKey;
@@ -37,9 +37,10 @@ namespace TwitchBot.Commands
 			{
 				int numberOfBricksDropped = 1;
 				if (commandArgs.Command.ArgumentsAsList.Any())
-					int.TryParse(commandArgs.Command.ArgumentsAsList[0], out numberOfBricksDropped);
-
-				_bricksDropped += numberOfBricksDropped;
+					if (int.TryParse(commandArgs.Command.ArgumentsAsList[0], out numberOfBricksDropped))
+						_bricksDropped += numberOfBricksDropped;
+					else
+						_bricksDropped++;
 				UpdateProjectStats(bricksDropped: numberOfBricksDropped);
 			}
 

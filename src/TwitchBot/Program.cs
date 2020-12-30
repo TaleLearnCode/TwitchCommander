@@ -10,17 +10,17 @@ namespace TwitchBot
 	{
 
 		private static IConfigurationRoot _config;
-		private static StreamLabelSettings _streamLabelSettings = new();
-		private static TimerIntervalSettings _timerIntervalSettings = new();
-		private static AzureStorageSettings _azureStorage = new();
-		private static TwitchSettings _twitchSettings = new();
+		private static readonly StreamLabelSettings _streamLabelSettings = new();
+		private static readonly TimerIntervalSettings _timerIntervalSettings = new();
+		private static readonly AzureStorageSettings _azureStorage = new();
+		private static readonly TwitchSettings _twitchSettings = new();
 
 		static void Main()
 		{
 			WelcomeUser();
 			Initialize();
 
-			Bot bot = new Bot(_twitchSettings, _azureStorage, _streamLabelSettings, _timerIntervalSettings);
+			Bot bot = new(_twitchSettings, _azureStorage, _streamLabelSettings, _timerIntervalSettings);
 			bot.Connect(false);
 			Console.ReadLine();
 			bot.Disconnect();

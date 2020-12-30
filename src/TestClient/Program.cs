@@ -45,28 +45,26 @@ namespace TestClient
 
 		}
 
-		private static void ChatCommandSavingTesting(string command)
-		{
+		//private static void ChatCommandSavingTesting(string command)
+		//{
 
-
-
-			ChatCommand chatCommand = new()
-			{
-				ChannelName = "BricksWithChad",
-				Command = command,
-				CommandName = "Shoutout",
-				UserPermission = UserPermission.Moderator,
-				Response = "Be sure to check out ${0} at https://twitch.tv/${0}",
-				IsEnabledWhenStreaming = true,
-				IsEnabledWhenNotStreaming = false,
-				CommandResponseType = CommandResponseType.Say,
-				UserCooldown = 0,
-				GlobalCooldown = 0,
-				//CommandAliases = new List<string> { "shoutout", "shoutout2", "shoutout3", "shoutout4", "shoutout5" }
-				CommandAliases = new List<string> { $"{command}-1", $"{command}-2", $"{command}-3", $"{command}-4", $"{command}-5" }
-			};
-			chatCommand.Save(_azureStorageSettings);
-		}
+		//	ChatCommand chatCommand = new()
+		//	{
+		//		ChannelName = "BricksWithChad",
+		//		Command = command,
+		//		CommandName = "Shoutout",
+		//		UserPermission = UserPermission.Moderator,
+		//		Response = "Be sure to check out ${0} at https://twitch.tv/${0}",
+		//		IsEnabledWhenStreaming = true,
+		//		IsEnabledWhenNotStreaming = false,
+		//		CommandResponseType = CommandResponseType.Say,
+		//		UserCooldown = 0,
+		//		GlobalCooldown = 0,
+		//		//CommandAliases = new List<string> { "shoutout", "shoutout2", "shoutout3", "shoutout4", "shoutout5" }
+		//		CommandAliases = new List<string> { $"{command}-1", $"{command}-2", $"{command}-3", $"{command}-4", $"{command}-5" }
+		//	};
+		//	chatCommand.Save(_azureStorageSettings);
+		//}
 
 		public static void ChatCommandRetrievalTesting()
 		{
