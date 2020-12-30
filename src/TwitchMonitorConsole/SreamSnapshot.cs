@@ -1,7 +1,6 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 using System;
-using TwitchLib.Api;
 using TwitchLib.Api.Helix.Models.Streams;
 
 

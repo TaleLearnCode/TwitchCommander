@@ -1,5 +1,4 @@
 ﻿using System;
-using TwitchLib.Client.Events;
 
 namespace TaleLearnCode.TwitchCommander.Events
 {

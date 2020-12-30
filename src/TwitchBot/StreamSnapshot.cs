@@ -3,7 +3,6 @@ using Azure.Data.Tables;
 using System;
 using System.Linq;
 using TwitchBot.settings;
-using TwitchLib.Api;
 using TwitchLib.Api.Helix.Models.Streams;
 
 namespace TwitchBot
