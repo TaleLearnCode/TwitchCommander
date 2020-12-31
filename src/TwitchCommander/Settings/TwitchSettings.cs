@@ -7,6 +7,7 @@
 		public string RefreshToken { get; set; }
 		public string ClientId { get; set; }
 		public string ChannelName { get; set; }
+		public int CheckInterval { get; set; }
 
 	}
 }

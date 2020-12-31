@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using TaleLearnCode.TwitchCommander.AzureStorage;
 using TaleLearnCode.TwitchCommander.Events;
 using TaleLearnCode.TwitchCommander.Extensions;
@@ -45,8 +46,22 @@ namespace TaleLearnCode.TwitchCommander
 					if (!_IsOnline && !chatCommand.IsEnabledWhenNotStreaming)
 						_twitchClient.SendMessage(e.Command.ChatMessage.BotUsername, $"The {chatCommand.CommandName} is only available when {e.Command.ChatMessage.Channel} is broadcasting.");
 
-					// TODO: Handle no argument coming in					
-					string responseMessage = string.Format(chatCommand.Response, e.Command.ArgumentsAsList.ToArray());
+					string responseMessage;
+					if (e.Command.ArgumentsAsList.Any())
+					{
+						responseMessage = string.Format(chatCommand.Response, e.Command.ArgumentsAsList.ToArray());
+					}
+					else if (chatCommand.Response.Contains('{'))
+					{
+						responseMessage = $"The '{e.Command.CommandText}' requires {chatCommand.Response.Count(x => x == '{')} argument(s).";
+						chatCommand.CommandResponseType = CommandResponseType.Reply;
+					}
+					else
+					{
+						responseMessage = chatCommand.Response;
+					}
+
+
 
 					switch (chatCommand.CommandResponseType)
 					{

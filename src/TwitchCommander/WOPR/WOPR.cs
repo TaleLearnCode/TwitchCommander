@@ -85,9 +85,7 @@ namespace TaleLearnCode.TwitchCommander
 		private void ConfigureTwitchMonitor()
 		{
 
-			// TODO Make the CheckInterval a setting
-			_twitchMonitor = new(_twitchAPI, 5);
-
+			_twitchMonitor = new(_twitchAPI, _twitchSettings.CheckInterval);
 			_twitchMonitor.SetChannelsById(new List<string> { _twitchSettings.ChannelName });
 
 			_twitchMonitor.OnStreamOffline += TwitchMonitor_OnStreamOffline;

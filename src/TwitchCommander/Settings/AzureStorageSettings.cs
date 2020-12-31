@@ -8,8 +8,6 @@
 	public class AzureStorageSettings
 	{
 
-		// TODO: Switch the Uri property to a URI data type.
-
 		/// <summary>
 		/// Gets or sets the Azure Storage account URI.
 		/// </summary>
