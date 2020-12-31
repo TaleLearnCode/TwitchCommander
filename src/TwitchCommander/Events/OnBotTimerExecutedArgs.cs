@@ -12,6 +12,8 @@ namespace TaleLearnCode.TwitchCommander.Events
 
 		public string ResponseMessage { get; set; }
 
+		public bool ChatThresholdMet { get; set; }
+
 
 	}
 

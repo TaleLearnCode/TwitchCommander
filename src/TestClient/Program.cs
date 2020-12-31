@@ -71,7 +71,7 @@ namespace TestClient
 
 		private static void BotTimerSavingTest(string botTimerName)
 		{
-			BotTimerEntity.Save(_azureStorageSettings, "brickswithchad", botTimerName, botTimerName, 1, 1, 0);
+			BotTimerEntity.Save(_azureStorageSettings, "brickswithchad", botTimerName, botTimerName, 1, 1, 5);
 		}
 
 		public static void ChatCommandRetrievalTesting()
@@ -145,7 +145,7 @@ namespace TestClient
 
 		private static void WOPR_OnBotTimerExecuted(object sender, OnBotTimerExecutedArgs e)
 		{
-			ConsoleHelper.PrintMessageToConsole($"[{e.ChannelName}] Executed {e.BotTimerName} bot timer");
+			ConsoleHelper.PrintMessageToConsole($"[{e.ChannelName}] Executed {e.BotTimerName} bot timer : {e.ChatThresholdMet}");
 		}
 
 		private static void WOPR_OnChatCommandTimedOut(object sender, OnChatCommandTimedOutArgs e)

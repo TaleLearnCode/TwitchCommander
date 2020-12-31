@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TaleLearnCode.TwitchCommander.Settings;
 using TwitchLib.Api;
 using TwitchLib.Api.Services;
 using TwitchLib.Client;
+using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
 
 namespace TaleLearnCode.TwitchCommander
@@ -68,6 +70,10 @@ namespace TaleLearnCode.TwitchCommander
 			_twitchClient.OnReSubscriber += TwitchClient_OnResubscriber;
 			_credentials = new ConnectionCredentials(_twitchSettings.ChannelName, _twitchSettings.AccessToken);
 			_twitchClient.Initialize(_credentials, _twitchSettings.ChannelName);
+
+
+			_twitchClient.OnMessageReceived += TwitchClient_OnMessageReceived;
+
 		}
 
 		/// <summary>

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Timers;
 using TaleLearnCode.TwitchCommander.AzureStorage;
 using TaleLearnCode.TwitchCommander.Events;
+using TaleLearnCode.TwitchCommander.Extensions;
 using TaleLearnCode.TwitchCommander.Models;
+using TwitchLib.Client.Events;
 
 namespace TaleLearnCode.TwitchCommander
 {
@@ -12,9 +15,9 @@ namespace TaleLearnCode.TwitchCommander
 	{
 
 		private Timer _timer = default;
+		private readonly List<ReceivedChatMessage> _receivedChatMessages = new(); // TODO: Clean up
 
 		private int TimerExecutions = 0;
-
 
 		private void ConfigureTimers()
 		{
@@ -34,16 +37,18 @@ namespace TaleLearnCode.TwitchCommander
 			{
 				if ((_IsOnline && botTimer.NextOnlineExecution <= DateTime.UtcNow) || (!_IsOnline && botTimer.NextOfflineExecution <= DateTime.UtcNow))
 				{
-					_twitchClient.SendMessage(_twitchSettings.ChannelName, botTimer.ResponseMessage);
+					bool chatThresholdMet = _receivedChatMessages.Where(c => c.Timestamp > DateTime.UtcNow.AddMinutes(-5).ToUnixTimeSeconds()).ToList().Count >= botTimer.ChatLines;
+					if (chatThresholdMet)
+						_twitchClient.SendMessage(_twitchSettings.ChannelName, botTimer.ResponseMessage);
+					InvokeOnBotTimerExecuted(botTimer.BotTimerName, botTimer.ResponseMessage, chatThresholdMet);
 					BotTimerEntity.BotTimerExecuted(botTimer, _azureStorageSettings);
-					InvokeOnBotTimerExecuted(botTimer.BotTimerName, botTimer.ResponseMessage);
 				}
 			}
 		}
 
 		public EventHandler<OnBotTimerExecutedArgs> OnBotTimerExecuted;
 
-		private void InvokeOnBotTimerExecuted(string botTimerName, string responseMessage)
+		private void InvokeOnBotTimerExecuted(string botTimerName, string responseMessage, bool chatThresholdMet)
 		{
 			OnBotTimerExecuted?.Invoke(
 				this,
@@ -51,8 +56,15 @@ namespace TaleLearnCode.TwitchCommander
 				{
 					BotTimerName = botTimerName,
 					ResponseMessage = responseMessage,
-					ChannelName = _twitchSettings.ChannelName
+					ChannelName = _twitchSettings.ChannelName,
+					ChatThresholdMet = chatThresholdMet
 				});
+		}
+
+		private void TwitchClient_OnMessageReceived(object sender, OnMessageReceivedArgs e)
+		{
+			if (e.ChatMessage.Username.ToLower() != _twitchSettings.ChannelName.ToLower())
+				_receivedChatMessages.Add(new ReceivedChatMessage(e.ChatMessage));
 		}
 
 	}
