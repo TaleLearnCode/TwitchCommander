@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="TableEntities\" />
+    <ProjectReference Include="..\TwitchBot\TwitchBot.csproj" />
   </ItemGroup>
 
 </Project>

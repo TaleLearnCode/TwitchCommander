@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using TaleLearnCode.TwitchCommander;
+using TaleLearnCode.TwitchCommander.AzureStorage;
 using TaleLearnCode.TwitchCommander.Events;
 using TaleLearnCode.TwitchCommander.Settings;
 
@@ -21,6 +22,7 @@ namespace TestClient
 		static void Main()
 		{
 			Initialize();
+			BotTimerSavingTest("Timer1");
 			TwitchClientTesting();
 
 
@@ -65,6 +67,12 @@ namespace TestClient
 		//	};
 		//	chatCommand.Save(_azureStorageSettings);
 		//}
+
+
+		private static void BotTimerSavingTest(string botTimerName)
+		{
+			BotTimerEntity.Save(_azureStorageSettings, "brickswithchad", botTimerName, botTimerName, 1, 1, 0);
+		}
 
 		public static void ChatCommandRetrievalTesting()
 		{
@@ -124,6 +132,8 @@ namespace TestClient
 			wopr.OnCommandNotPermitted += WOPR_OnCommandNotPermitted;
 			wopr.OnChatCommandTimedOut += WOPR_OnChatCommandTimedOut;
 
+			wopr.OnBotTimerExecuted += WOPR_OnBotTimerExecuted;
+
 			//wopr.Connect("BricksWithChad", logEvents);
 			wopr.Start();
 
@@ -131,6 +141,11 @@ namespace TestClient
 
 			wopr.Disconnect();
 
+		}
+
+		private static void WOPR_OnBotTimerExecuted(object sender, OnBotTimerExecutedArgs e)
+		{
+			ConsoleHelper.PrintMessageToConsole($"[{e.ChannelName}] Executed {e.BotTimerName} bot timer");
 		}
 
 		private static void WOPR_OnChatCommandTimedOut(object sender, OnChatCommandTimedOutArgs e)
@@ -175,6 +190,7 @@ namespace TestClient
 		{
 			Console.WriteLine($"{e.BotUsername} is connected to {e.AutoJoinChannel}");
 		}
+
 
 		private static void Initialize()
 		{

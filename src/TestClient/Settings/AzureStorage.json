@@ -2,9 +2,10 @@
   "AzureStorage": {
     "Uri": "https://sttwitchwatcher.table.core.windows.net",
     "AccountName": "sttwitchwatcher",
-    "AccountKey": "Z1dhnjBtkG4kRvYDFVltwAjgXeH3hbHhIN0h9qCGv/6TXSDEAfsYTFlf+Zrvj5aPRfMYaFApnowZl6l+fTPByg==",
+    "AccountKey": "PLu/6W31bmANsrHKE7Ku50Yuv8FTorKsi/qY5rA0eLhCUY07sF/pa8LCpqzidp604vtP0I1Ek3Dtcbl5b2bjXA==",
     "ChatCommandTableName": "ChatCommands",
     "ChatCommandAliasesTableName": "ChatCommandAliases",
-    "ChatCommandActivityTableName":  "ChatCommandActivityLog"
+    "ChatCommandActivityTableName": "ChatCommandActivityLog",
+    "TimerBotTableName": "TimerBots"
   }
 }

@@ -50,6 +50,7 @@ namespace TaleLearnCode.TwitchCommander
 		{
 			_twitchClient.Connect();
 			_twitchMonitor.Start();
+			ConfigureTimers();
 		}
 
 		/// <summary>

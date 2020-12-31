@@ -10,7 +10,8 @@
     //"ClientId": "gp762nuuoqcoxypju8c569th9wz7q5",
     //"ChannelName": "TaleLearnCode",
 
-    "CheckInterval":  5
+    "CheckInterval": 5,
+    "TimerInterval": 5000
 
   }
 }
