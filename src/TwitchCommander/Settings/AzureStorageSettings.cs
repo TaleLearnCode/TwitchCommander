@@ -56,6 +56,8 @@
 		/// </value>
 		public string ChatCommandActivityTableName { get; set; }
 
+		public string ProjectTrackingTableName { get; set; }
+
 		/// <summary>
 		/// Gets or sets the name of the timer bot table.
 		/// </summary>

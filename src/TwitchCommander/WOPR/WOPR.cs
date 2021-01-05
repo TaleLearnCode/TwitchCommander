@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TaleLearnCode.TwitchCommander.Settings;
 using TwitchLib.Api;
 using TwitchLib.Api.Services;
 using TwitchLib.Client;
-using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
 
 namespace TaleLearnCode.TwitchCommander
@@ -15,6 +13,7 @@ namespace TaleLearnCode.TwitchCommander
 
 		private readonly TwitchSettings _twitchSettings;
 		private readonly AzureStorageSettings _azureStorageSettings;
+		private readonly TimerIntervalSettings _timerIntervalSettings;
 		private readonly bool _viewLogs;
 
 		private readonly TwitchClient _twitchClient = new();
@@ -33,11 +32,13 @@ namespace TaleLearnCode.TwitchCommander
 		public WOPR(
 			TwitchSettings twitchSettings,
 			AzureStorageSettings azureStorageSettings,
+			TimerIntervalSettings timerIntervalSettings,
 			bool viewLogs)
 		{
 
 			_twitchSettings = twitchSettings;
 			_azureStorageSettings = azureStorageSettings;
+			_timerIntervalSettings = timerIntervalSettings;
 			_viewLogs = viewLogs;
 
 			ConfigureTwitchClient();
@@ -99,6 +100,11 @@ namespace TaleLearnCode.TwitchCommander
 			_twitchMonitor.OnStreamOnline += TwitchMonitor_OnStreamOnline;
 			_twitchMonitor.OnStreamUpdate += TwitchMonitor_OnStreamUpdate;
 
+		}
+
+		private void SendMessage(string message)
+		{
+			_twitchClient.SendMessage(_twitchSettings.ChannelName, message);
 		}
 
 	}

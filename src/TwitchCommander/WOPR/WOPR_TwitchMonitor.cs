@@ -1,10 +1,13 @@
 ﻿using System;
+using TwitchLib.Api.Helix.Models.Streams;
 using TwitchLib.Api.Services.Events.LiveStreamMonitor;
 
 namespace TaleLearnCode.TwitchCommander
 {
 	public partial class WOPR
 	{
+
+		private Stream _stream;
 
 		/// <summary>
 		/// Handles the <see cref="TwitchLib.Api.Services.LiveStreamMonitorService.OnStreamUpdate"/> event.
@@ -24,6 +27,7 @@ namespace TaleLearnCode.TwitchCommander
 		private void TwitchMonitor_OnStreamOnline(object sender, OnStreamOnlineArgs e)
 		{
 			_IsOnline = true;
+			_stream = e.Stream;
 		}
 
 		/// <summary>
@@ -34,6 +38,7 @@ namespace TaleLearnCode.TwitchCommander
 		private void TwitchMonitor_OnStreamOffline(object sender, OnStreamOfflineArgs e)
 		{
 			_IsOnline = false;
+			_stream = null;
 		}
 
 	}

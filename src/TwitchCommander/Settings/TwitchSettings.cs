@@ -8,7 +8,5 @@
 		public string ClientId { get; set; }
 		public string ChannelName { get; set; }
 		public int CheckInterval { get; set; }
-		public int TimerInterval { get; set; }
-
 	}
 }

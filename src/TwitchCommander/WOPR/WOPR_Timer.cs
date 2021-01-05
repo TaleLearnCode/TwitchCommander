@@ -17,11 +17,11 @@ namespace TaleLearnCode.TwitchCommander
 		private Timer _timer = default;
 		private readonly List<ReceivedChatMessage> _receivedChatMessages = new(); // TODO: Clean up
 
-		private int TimerExecutions = 0;
+		private int elaspedMinutes = 0;
 
 		private void ConfigureTimers()
 		{
-			_timer = new Timer(_twitchSettings.TimerInterval);
+			_timer = new Timer(60000);
 			_timer.Elapsed += OnBotTimerElapsed;
 			_timer.AutoReset = true;
 			_timer.Enabled = true;
@@ -29,8 +29,6 @@ namespace TaleLearnCode.TwitchCommander
 
 		private void OnBotTimerElapsed(object sender, ElapsedEventArgs e)
 		{
-			TimerExecutions++;
-			Console.WriteLine($"Timer Executions: {TimerExecutions}");
 
 			List<BotTimer> botTimers = BotTimerEntity.Retrieve(_azureStorageSettings, _twitchSettings.ChannelName);
 			foreach (BotTimer botTimer in botTimers)
@@ -44,6 +42,10 @@ namespace TaleLearnCode.TwitchCommander
 					BotTimerEntity.BotTimerExecuted(botTimer, _azureStorageSettings);
 				}
 			}
+
+			elaspedMinutes++;
+			if (elaspedMinutes % _timerIntervalSettings.ProjectReminder == 0) EnsureProjectIsSet();
+
 		}
 
 		public EventHandler<OnBotTimerExecutedArgs> OnBotTimerExecuted;

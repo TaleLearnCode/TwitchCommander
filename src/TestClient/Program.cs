@@ -124,7 +124,7 @@ namespace TestClient
 
 			bool logEvents = false;
 
-			var wopr = new WOPR(_twitchSettings, _azureStorageSettings, logEvents);
+			var wopr = new WOPR(_twitchSettings, _azureStorageSettings, _timerIntervalSettings, logEvents);
 			if (logEvents) wopr.OnLoggedEvent += WOPR_OnLoggedEvent;
 			wopr.OnBotConnected += WOPR_OnBotConnected;
 			wopr.OnBotDisconnected += WOPR_OnBotDisconnected;

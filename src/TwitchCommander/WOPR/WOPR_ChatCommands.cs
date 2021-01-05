@@ -20,81 +20,98 @@ namespace TaleLearnCode.TwitchCommander
 		private void TwitchClient_OnChatCommandReceived(object sender, OnChatCommandReceivedArgs e)
 		{
 
-			ChatCommand chatCommand = ChatCommand.RetrieveByCommand(_twitchSettings.ChannelName, e.Command.CommandText.ToLower(), _azureStorageSettings);
-			if (chatCommand is null)
-				chatCommand = ChatCommand.RetrieveByCommandAlias("BricksWithChad", e.Command.CommandText.ToLower(), _azureStorageSettings);
-
-			if (chatCommand is not null)
+			if (e.Command.CommandText.ToLower() == "project")
 			{
-				if (!UserPermittedToExecuteCommand(chatCommand, e.Command.ChatMessage))
+				if (e.Command.ArgumentsAsList.Any() && UserPermittedToExecuteCommand(UserPermission.Moderator, e.Command.ChatMessage))
 				{
-					InvokeOnCommandNotPermitted(e, chatCommand);
+					SetProject(e.Command.ArgumentsAsString);
 				}
-				else if (chatCommand.GlobalCooldown > 0 && IsCommandTimedOut(chatCommand, ChatCommandTimeoutType.Global, e.Command.ChatMessage.Username, e.Command.ChatMessage.Message))
+				// TODO: Global timeouts
+				else if (_projectTracking != null)
 				{
-					// Globally timed out - ignore the chat command (event raised in IsCommandTimedOut)
-				}
-				else if (chatCommand.UserCooldown > 0 && IsCommandTimedOut(chatCommand, ChatCommandTimeoutType.Chatter, e.Command.ChatMessage.Username, e.Command.ChatMessage.Message))
-				{
-					// Timed out for the user - ignore the chat command (event raised in IsCommandTimedOut)
+					SendMessage($"{_twitchSettings.ChannelName} is working on the '{_projectTracking.ProjectName}; project.");
 				}
 				else
 				{
+					SendMessage($"{_twitchSettings.ChannelName} has not set a project for this stream yet.");
+				}
+			}
+			else
+			{
+				ChatCommand chatCommand = ChatCommand.RetrieveByCommand(_twitchSettings.ChannelName, e.Command.CommandText.ToLower(), _azureStorageSettings);
+				if (chatCommand is null)
+					chatCommand = ChatCommand.RetrieveByCommandAlias("BricksWithChad", e.Command.CommandText.ToLower(), _azureStorageSettings);
 
-					if (_IsOnline && !chatCommand.IsEnabledWhenStreaming)
-						_twitchClient.SendMessage(e.Command.ChatMessage.BotUsername, $"The {chatCommand.CommandName} is not available while {e.Command.ChatMessage.Channel} is broadcasting.");
-					if (!_IsOnline && !chatCommand.IsEnabledWhenNotStreaming)
-						_twitchClient.SendMessage(e.Command.ChatMessage.BotUsername, $"The {chatCommand.CommandName} is only available when {e.Command.ChatMessage.Channel} is broadcasting.");
-
-					string responseMessage;
-					if (e.Command.ArgumentsAsList.Any())
+				if (chatCommand is not null)
+				{
+					if (!UserPermittedToExecuteCommand(chatCommand.UserPermission, e.Command.ChatMessage))
 					{
-						responseMessage = string.Format(chatCommand.Response, e.Command.ArgumentsAsList.ToArray());
+						InvokeOnCommandNotPermitted(e, chatCommand);
 					}
-					else if (chatCommand.Response.Contains('{'))
+					else if (chatCommand.GlobalCooldown > 0 && IsCommandTimedOut(chatCommand, ChatCommandTimeoutType.Global, e.Command.ChatMessage.Username, e.Command.ChatMessage.Message))
 					{
-						responseMessage = $"The '{e.Command.CommandText}' requires {chatCommand.Response.Count(x => x == '{')} argument(s).";
-						chatCommand.CommandResponseType = CommandResponseType.Reply;
+						// Globally timed out - ignore the chat command (event raised in IsCommandTimedOut)
+					}
+					else if (chatCommand.UserCooldown > 0 && IsCommandTimedOut(chatCommand, ChatCommandTimeoutType.Chatter, e.Command.ChatMessage.Username, e.Command.ChatMessage.Message))
+					{
+						// Timed out for the user - ignore the chat command (event raised in IsCommandTimedOut)
 					}
 					else
 					{
-						responseMessage = chatCommand.Response;
+
+						if (_IsOnline && !chatCommand.IsEnabledWhenStreaming)
+							_twitchClient.SendMessage(e.Command.ChatMessage.BotUsername, $"The {chatCommand.CommandName} is not available while {e.Command.ChatMessage.Channel} is broadcasting.");
+						if (!_IsOnline && !chatCommand.IsEnabledWhenNotStreaming)
+							_twitchClient.SendMessage(e.Command.ChatMessage.BotUsername, $"The {chatCommand.CommandName} is only available when {e.Command.ChatMessage.Channel} is broadcasting.");
+
+						string responseMessage;
+						if (e.Command.ArgumentsAsList.Any())
+						{
+							responseMessage = string.Format(chatCommand.Response, e.Command.ArgumentsAsList.ToArray());
+						}
+						else if (chatCommand.Response.Contains('{'))
+						{
+							responseMessage = $"The '{e.Command.CommandText}' requires {chatCommand.Response.Count(x => x == '{')} argument(s).";
+							chatCommand.CommandResponseType = CommandResponseType.Reply;
+						}
+						else
+						{
+							responseMessage = chatCommand.Response;
+						}
+
+						switch (chatCommand.CommandResponseType)
+						{
+							case CommandResponseType.Say:
+								_twitchClient.SendMessage(e.Command.ChatMessage.BotUsername, responseMessage);
+								break;
+							case CommandResponseType.Reply:
+								_twitchClient.SendMessage(e.Command.ChatMessage.BotUsername, $"@{e.Command.ChatMessage.Username}: {responseMessage}");
+								break;
+							case CommandResponseType.Whisper:
+								// TODO: Fix the whisper commands
+								_twitchClient.SendWhisper(e.Command.ChatMessage.UserId, responseMessage);
+								break;
+						}
+
+						ChatCommandActivityEntity.Save(_azureStorageSettings, _twitchSettings.ChannelName, e.Command.ChatMessage.Username, chatCommand.CommandName, e.Command.ChatMessage.Message, responseMessage);
+						InvokeOnCommandReceived(e, chatCommand, responseMessage);
 					}
 
-
-
-					switch (chatCommand.CommandResponseType)
-					{
-						case CommandResponseType.Say:
-							_twitchClient.SendMessage(e.Command.ChatMessage.BotUsername, responseMessage);
-							break;
-						case CommandResponseType.Reply:
-							_twitchClient.SendMessage(e.Command.ChatMessage.BotUsername, $"@{e.Command.ChatMessage.Username}: {responseMessage}");
-							break;
-						case CommandResponseType.Whisper:
-							// TODO: Fix the whisper commands
-							_twitchClient.SendWhisper(e.Command.ChatMessage.UserId, responseMessage);
-							break;
-					}
-
-					ChatCommandActivityEntity.Save(_azureStorageSettings, _twitchSettings.ChannelName, e.Command.ChatMessage.Username, chatCommand.CommandName, e.Command.ChatMessage.Message, responseMessage);
-					InvokeOnCommandReceived(e, chatCommand, responseMessage);
 				}
 
 			}
-
 
 		}
 
 		/// <summary>
 		/// Determines whether a chat command user is authorized to perform the command.
 		/// </summary>
-		/// <param name="chatCommand">A <see cref="ChatCommand"/> representing the received chat command.</param>
+		/// <param name="userPermission">A <see cref="UserPermission"/> representing the required permission to execute the command.</param>
 		/// <param name="chatMessage">A <see cref="ChatMessage"/> representing the requested chat command.</param>
 		/// <returns><c>true</c> if the user is authorized to perform the chat command; otherwise, <c>false</c>.</returns>
-		private static bool UserPermittedToExecuteCommand(ChatCommand chatCommand, ChatMessage chatMessage)
+		private static bool UserPermittedToExecuteCommand(UserPermission userPermission, ChatMessage chatMessage)
 		{
-			switch (chatCommand.UserPermission)
+			switch (userPermission)
 			{
 				case UserPermission.Broadcaster:
 					if (chatMessage.IsBroadcaster) return true;

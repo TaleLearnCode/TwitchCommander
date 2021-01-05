@@ -6,6 +6,7 @@
     "ChatCommandTableName": "ChatCommands",
     "ChatCommandAliasesTableName": "ChatCommandAliases",
     "ChatCommandActivityTableName": "ChatCommandActivityLog",
-    "TimerBotTableName": "TimerBots"
+    "TimerBotTableName": "TimerBots",
+    "ProjectTrackingTableName":  "Projects"
   }
 }
