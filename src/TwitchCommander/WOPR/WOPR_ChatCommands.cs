@@ -22,19 +22,7 @@ namespace TaleLearnCode.TwitchCommander
 
 			if (e.Command.CommandText.ToLower() == "project")
 			{
-				if (e.Command.ArgumentsAsList.Any() && UserPermittedToExecuteCommand(UserPermission.Moderator, e.Command.ChatMessage))
-				{
-					SetProject(e.Command.ArgumentsAsString);
-				}
-				// TODO: Global timeouts
-				else if (_projectTracking != null)
-				{
-					SendMessage($"{_twitchSettings.ChannelName} is working on the '{_projectTracking.ProjectName}; project.");
-				}
-				else
-				{
-					SendMessage($"{_twitchSettings.ChannelName} has not set a project for this stream yet.");
-				}
+				HandleProjectCommand(e.Command);
 			}
 			else
 			{
