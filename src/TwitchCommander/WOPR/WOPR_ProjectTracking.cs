@@ -13,7 +13,7 @@ namespace TaleLearnCode.TwitchCommander
 
 		private void EnsureProjectIsSet()
 		{
-			if (_projectTracking == null)
+			if (_projectTracking == null && _IsOnline)
 				SendMessage($"Hey @{_twitchSettings.ChannelName}, don't forget to set the project you are working on.");
 		}
 

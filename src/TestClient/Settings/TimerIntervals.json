@@ -1,6 +1,6 @@
 {
   "TimerInterval": {
-    "ProjectReminder": 300,
-    "WaterReminder": 1200
+    "ProjectReminder": 1,
+    "WaterReminder": 20
   }
 }
