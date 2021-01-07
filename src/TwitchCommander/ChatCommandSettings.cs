@@ -6,7 +6,7 @@ using TaleLearnCode.TwitchCommander.Settings;
 namespace TaleLearnCode.TwitchCommander
 {
 
-	public class ChatCommand
+	public class ChatCommandSettings
 	{
 
 		/// <summary>
@@ -103,7 +103,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// <param name="channelName">Name of the channel whose chat commands to be retrieved.</param>
 		/// <param name="azureStorageSettings">A <see cref="AzureStorageSettings"/> containing the Azure Storage connection details.</param>
 		/// <returns>A <see cref="List{ChatCommand}"/> representing the list of chat commands for the channel.</returns>
-		public static List<ChatCommand> Retrieve(string channelName, AzureStorageSettings azureStorageSettings)
+		public static List<ChatCommandSettings> Retrieve(string channelName, AzureStorageSettings azureStorageSettings)
 		{
 			return ChatCommandEntity.Retrieve(channelName, azureStorageSettings);
 		}
@@ -115,18 +115,18 @@ namespace TaleLearnCode.TwitchCommander
 		/// <param name="command">The command to be retrieved.</param>
 		/// <param name="azureStorageSettings">A <see cref="AzureStorageSettings"/> containing the Azure Storage connection details.</param>
 		/// <returns></returns>
-		public static ChatCommand RetrieveByCommand(string channelName, string command, AzureStorageSettings azureStorageSettings)
+		public static ChatCommandSettings RetrieveByCommand(string channelName, string command, AzureStorageSettings azureStorageSettings)
 		{
 			return ChatCommandEntity.RetrieveByCommand(channelName, command, azureStorageSettings);
 		}
 
-		public static ChatCommand RetrieveByCommandAlias(string channelName, string commandAlias, AzureStorageSettings azureStorageSettings)
+		public static ChatCommandSettings RetrieveByCommandAlias(string channelName, string commandAlias, AzureStorageSettings azureStorageSettings)
 		{
 			return ChatCommandEntity.RetrieveByCommandAlias(channelName, commandAlias, azureStorageSettings);
 		}
 
 		/// <summary>
-		/// Saves the <see cref="ChatCommand"/> to the database.
+		/// Saves the <see cref="ChatCommandSettings"/> to the database.
 		/// </summary>
 		/// <param name="azureStorageSettings">A <see cref="AzureStorageSettings"/> containing the Azure Storage connection details.</param>
 		public void Save(AzureStorageSettings azureStorageSettings)

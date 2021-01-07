@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>TaleLearnCode.TwitchCommander</RootNamespace>
+    <AssemblyName>TaleLearnCode.TwitchCommander.Library</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Data.Tables" Version="3.0.0-beta.4" />
+    <PackageReference Include="TwitchLib" Version="3.1.1" />
+  </ItemGroup>
+
+</Project>

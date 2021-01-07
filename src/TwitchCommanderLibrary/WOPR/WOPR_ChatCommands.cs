@@ -26,9 +26,9 @@ namespace TaleLearnCode.TwitchCommander
 			}
 			else
 			{
-				ChatCommandSettings chatCommand = ChatCommandSettings.RetrieveByCommand(_twitchSettings.ChannelName, e.Command.CommandText.ToLower(), _azureStorageSettings);
+				ChatCommandSettings chatCommand = ChatCommandEntity.RetrieveByCommand(_twitchSettings.ChannelName, e.Command.CommandText.ToLower(), _azureStorageSettings, _tableNames);
 				if (chatCommand is null)
-					chatCommand = ChatCommandSettings.RetrieveByCommandAlias("BricksWithChad", e.Command.CommandText.ToLower(), _azureStorageSettings);
+					chatCommand = ChatCommandEntity.RetrieveByCommandAlias(_twitchSettings.ChannelName, e.Command.CommandText.ToLower(), _azureStorageSettings, _tableNames);
 
 				if (chatCommand is not null)
 				{
@@ -81,7 +81,7 @@ namespace TaleLearnCode.TwitchCommander
 								break;
 						}
 
-						ChatCommandActivityEntity.Save(_azureStorageSettings, _twitchSettings.ChannelName, e.Command.ChatMessage.Username, chatCommand.CommandName, e.Command.ChatMessage.Message, responseMessage);
+						ChatCommandActivityEntity.Save(_azureStorageSettings, _tableNames, _twitchSettings.ChannelName, e.Command.ChatMessage.Username, chatCommand.CommandName, e.Command.ChatMessage.Message, responseMessage);
 						InvokeOnCommandReceived(e, chatCommand, responseMessage);
 					}
 
@@ -122,13 +122,13 @@ namespace TaleLearnCode.TwitchCommander
 
 		private bool IsCommandTimedOut(ChatCommandSettings chatCommand, ChatCommandTimeoutType chatCommandTimeoutType, string chatter, string request)
 		{
-			ChatCommandActivity chatCommandActivity = ChatCommandActivityEntity.GetLastCommandRequest(_azureStorageSettings, _twitchSettings.ChannelName, chatCommand.CommandName, chatter);
+			ChatCommandActivity chatCommandActivity = ChatCommandActivityEntity.GetLastCommandRequest(_azureStorageSettings, _tableNames, _twitchSettings.ChannelName, chatCommand.CommandName, chatter);
 			bool timedOut = false;
 			if (chatCommandActivity != null)
 				timedOut = chatCommandActivity.RequestTime + ((chatCommandTimeoutType == ChatCommandTimeoutType.Global) ? chatCommand.GlobalCooldown : chatCommand.UserCooldown) >= DateTime.UtcNow.ToUnixTimeSeconds();
 			if (timedOut)
 			{
-				ChatCommandActivityEntity.Save(_azureStorageSettings, _twitchSettings.ChannelName, chatter, chatCommand.CommandName, request, string.Empty, chatCommandActivity.RequestTime, ChatCommandResult.GlobalCooldown);
+				ChatCommandActivityEntity.Save(_azureStorageSettings, _tableNames, _twitchSettings.ChannelName, chatter, chatCommand.CommandName, request, string.Empty, chatCommandActivity.RequestTime, ChatCommandResult.GlobalCooldown);
 				InvokeOnChatCommandTimedOut(chatCommand, chatCommandActivity, chatCommandTimeoutType);
 			}
 			return timedOut;

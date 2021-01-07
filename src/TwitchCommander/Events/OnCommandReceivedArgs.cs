@@ -12,10 +12,10 @@ namespace TaleLearnCode.TwitchCommander.Events
 		public string ArgumentsAsString { get; }
 		public ChatMessage ChatMessage { get; }
 		public string CommandText { get; }
-		public ChatCommand ChatCommand { get; }
+		public ChatCommandSettings ChatCommand { get; }
 		public string ReturnedMessage { get; }
 
-		public OnCommandReceivedArgs(OnChatCommandReceivedArgs onChatCommandReceivedArgs, ChatCommand chatCommand, string returnedMessage)
+		public OnCommandReceivedArgs(OnChatCommandReceivedArgs onChatCommandReceivedArgs, ChatCommandSettings chatCommand, string returnedMessage)
 		{
 			ArgumentsAsList = onChatCommandReceivedArgs.Command.ArgumentsAsList;
 			ArgumentsAsString = onChatCommandReceivedArgs.Command.ArgumentsAsString;

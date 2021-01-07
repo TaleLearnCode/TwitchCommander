@@ -76,7 +76,7 @@ namespace TestClient
 
 		public static void ChatCommandRetrievalTesting()
 		{
-			ChatCommand chatCommand = ChatCommand.RetrieveByCommand("BricksWithChad", "so", _azureStorageSettings);
+			ChatCommandSettings chatCommand = ChatCommandSettings.RetrieveByCommand("BricksWithChad", "so", _azureStorageSettings);
 			Console.WriteLine(chatCommand.CommandName);
 		}
 
@@ -84,8 +84,8 @@ namespace TestClient
 		{
 
 			Stopwatch stopwatch = Stopwatch.StartNew();
-			List<ChatCommand> chatCommands = ChatCommand.Retrieve("BricksWithChad", _azureStorageSettings);
-			Dictionary<string, ChatCommand> chatCommandDictionary = new();
+			List<ChatCommandSettings> chatCommands = ChatCommandSettings.Retrieve("BricksWithChad", _azureStorageSettings);
+			Dictionary<string, ChatCommandSettings> chatCommandDictionary = new();
 			var retrievalTime = stopwatch.ElapsedMilliseconds;
 			stopwatch.Restart();
 			int index = 0;
@@ -108,9 +108,9 @@ namespace TestClient
 
 		public static void TestChatCommandRetrieval(string command)
 		{
-			ChatCommand chatCommand = ChatCommand.RetrieveByCommand("BricksWithChad", command, _azureStorageSettings);
+			ChatCommandSettings chatCommand = ChatCommandSettings.RetrieveByCommand("BricksWithChad", command, _azureStorageSettings);
 			if (chatCommand is null)
-				chatCommand = ChatCommand.RetrieveByCommandAlias("BricksWithChad", command, _azureStorageSettings);
+				chatCommand = ChatCommandSettings.RetrieveByCommandAlias("BricksWithChad", command, _azureStorageSettings);
 
 			if (chatCommand is not null)
 				Console.WriteLine(chatCommand.Response);

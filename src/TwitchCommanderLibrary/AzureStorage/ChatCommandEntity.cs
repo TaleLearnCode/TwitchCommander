@@ -3,8 +3,7 @@ using Azure.Data.Tables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TaleLearnCode.TwitchCommander.Helpers;
-using TaleLearnCode.TwitchCommander.Settings;
+using TaleLearnCode.TwitchCommander.Models;
 
 namespace TaleLearnCode.TwitchCommander.AzureStorage
 {
@@ -118,9 +117,9 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 		/// <param name="channelName">Name of the channel whose chat commands to be retrieved.</param>
 		/// <param name="azureStorageSettings">A <see cref="AzureStorageSettings"/> containing the Azure Storage connection details.</param>
 		/// <returns>A <see cref="List{ChatCommand}"/> representing the list of chat commands for the channel.</returns>
-		public static List<ChatCommandSettings> Retrieve(string channelName, AzureStorageSettings azureStorageSettings, bool retrieveAliases = false)
+		public static List<ChatCommandSettings> Retrieve(string channelName, AzureStorageSettings azureStorageSettings, TableNames tableNames, bool retrieveAliases = false)
 		{
-			return ToChatCommandList(AzureStorageHelper.GetTableClient(azureStorageSettings, azureStorageSettings.ChatCommandTableName).Query<ChatCommandEntity>(c => c.PartitionKey == channelName.ToLower()).ToList(), retrieveAliases, azureStorageSettings);
+			return ToChatCommandList(AzureStorageHelper.GetTableClient(azureStorageSettings, tableNames.ChatCommand).Query<ChatCommandEntity>(c => c.PartitionKey == channelName.ToLower()).ToList(), retrieveAliases, azureStorageSettings, tableNames);
 		}
 
 		/// <summary>
@@ -130,11 +129,11 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 		/// <param name="command">The command to be retrieved.</param>
 		/// <param name="azureStorageSettings">A <see cref="AzureStorageSettings"/> containing the Azure Storage connection details.</param>
 		/// <returns>A <see cref="ChatCommandSettings"/> representing the searched for chat command.</returns>
-		public static ChatCommandSettings RetrieveByCommand(string channelName, string command, AzureStorageSettings azureStorageSettings, bool retrieveAliases = false)
+		public static ChatCommandSettings RetrieveByCommand(string channelName, string command, AzureStorageSettings azureStorageSettings, TableNames tableNames, bool retrieveAliases = false)
 		{
-			var response = AzureStorageHelper.GetTableClient(azureStorageSettings, azureStorageSettings.ChatCommandTableName).Query<ChatCommandEntity>(c => c.PartitionKey == channelName.ToLower() && c.RowKey == command.ToLower()).FirstOrDefault();
+			var response = AzureStorageHelper.GetTableClient(azureStorageSettings, tableNames.ChatCommand).Query<ChatCommandEntity>(c => c.PartitionKey == channelName.ToLower() && c.RowKey == command.ToLower()).FirstOrDefault();
 			if (response is not null)
-				return ToChatCommand(response, retrieveAliases ? ChatCommandAliasEntity.RetrieveForCommand(channelName, response.RowKey, azureStorageSettings) : null);
+				return ToChatCommand(response, retrieveAliases ? ChatCommandAliasEntity.RetrieveForCommand(channelName, response.RowKey, azureStorageSettings, tableNames) : null);
 			else
 				return default;
 		}
@@ -146,11 +145,11 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 		/// <param name="commandAlias">The command alias to filter on.</param>
 		/// <param name="azureStorageSettings">A <see cref="AzureStorageSettings"/> containing the Azure Storage connection details.</param>
 		/// <returns>A <see cref="ChatCommandSettings"/> representing the chat command found by one of its aliases.</returns>
-		public static ChatCommandSettings RetrieveByCommandAlias(string channelName, string commandAlias, AzureStorageSettings azureStorageSettings)
+		public static ChatCommandSettings RetrieveByCommandAlias(string channelName, string commandAlias, AzureStorageSettings azureStorageSettings, TableNames tableNames)
 		{
-			ChatCommandAliasEntity chatCommandAliasEntity = ChatCommandAliasEntity.Retrieve(channelName, commandAlias, azureStorageSettings);
+			ChatCommandAliasEntity chatCommandAliasEntity = ChatCommandAliasEntity.Retrieve(channelName, commandAlias, azureStorageSettings, tableNames);
 			if (chatCommandAliasEntity is not null)
-				return RetrieveByCommand(channelName, chatCommandAliasEntity.Command, azureStorageSettings);
+				return RetrieveByCommand(channelName, chatCommandAliasEntity.Command, azureStorageSettings, tableNames);
 			else
 				return default;
 		}
@@ -159,10 +158,10 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 		/// Saves the <see cref="ChatCommandSettings"/> to the database.
 		/// </summary>
 		/// <param name="azureStorageSettings">A <see cref="AzureStorageSettings"/> containing the Azure Storage connection details.</param>
-		public void Save(AzureStorageSettings azureStorageSettings)
+		public void Save(AzureStorageSettings azureStorageSettings, TableNames tableNames)
 		{
 			if (!string.IsNullOrWhiteSpace(PartitionKey) && !string.IsNullOrWhiteSpace(RowKey))
-				AzureStorageHelper.GetTableClient(azureStorageSettings, azureStorageSettings.ChatCommandTableName).UpsertEntity(this);
+				AzureStorageHelper.GetTableClient(azureStorageSettings, tableNames.ChatCommand).UpsertEntity(this);
 		}
 
 		private static ChatCommandSettings ToChatCommand(ChatCommandEntity chatCommandEntity, List<ChatCommandAliasEntity> chatCommandAliasEntities)
@@ -188,11 +187,11 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 			};
 		}
 
-		private static List<ChatCommandSettings> ToChatCommandList(List<ChatCommandEntity> input, bool retrieveAliases, AzureStorageSettings azureStorageSettings)
+		private static List<ChatCommandSettings> ToChatCommandList(List<ChatCommandEntity> input, bool retrieveAliases, AzureStorageSettings azureStorageSettings, TableNames tableNames)
 		{
 			List<ChatCommandSettings> results = new();
 			foreach (var entity in input)
-				results.Add(ToChatCommand(entity, retrieveAliases ? ChatCommandAliasEntity.RetrieveForCommand(entity.PartitionKey, entity.RowKey, azureStorageSettings) : null));
+				results.Add(ToChatCommand(entity, retrieveAliases ? ChatCommandAliasEntity.RetrieveForCommand(entity.PartitionKey, entity.RowKey, azureStorageSettings, tableNames) : null));
 			return results;
 		}
 

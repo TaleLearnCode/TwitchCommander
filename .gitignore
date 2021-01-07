@@ -356,3 +356,4 @@ MigrationBackup/
 /src/TwitchBot/settings/StreamLabels.cs
 /src/TwitchBot/settings/appsettings.json
 /src/TwitchBot/Settings/TimerIntervals.json
+/src/TwitchCommanderApp/Settings
