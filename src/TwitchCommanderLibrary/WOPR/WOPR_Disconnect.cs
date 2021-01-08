@@ -13,6 +13,8 @@ namespace TaleLearnCode.TwitchCommander
 		public void Disconnect()
 		{
 			_twitchClient.Disconnect();
+			_twitchMonitor.Stop();
+			_timer.Stop();
 		}
 
 		/// <summary>

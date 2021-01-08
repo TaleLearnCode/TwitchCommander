@@ -53,7 +53,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// <summary>
 		/// Starts monitoring Twitch in order to perform the necessary actions.
 		/// </summary>
-		public void Start()
+		public void Connect()
 		{
 			_twitchClient.Connect();
 			_twitchMonitor.Start();

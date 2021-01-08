@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 
-namespace TwitchCommanderApp
+namespace TaleLearnCode.TwitchCommander
 {
 	static class Program
 	{
