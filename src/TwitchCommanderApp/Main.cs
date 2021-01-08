@@ -1,9 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System.IO;
-using System.Windows.Forms;
 using TaleLearnCode.TwitchCommander.Events;
 using TaleLearnCode.TwitchCommander.Models;
-using Telerik.WinControls.Enumerations;
 using Telerik.WinControls.UI;
 
 namespace TaleLearnCode.TwitchCommander
@@ -58,7 +56,13 @@ namespace TaleLearnCode.TwitchCommander
 		{
 			if (ViewSelector.SelectedIndex > -1)
 			{
-				MessageBox.Show(ViewSelector.SelectedItem.Text);
+				ActivityFeedLabel.Enabled = true;
+				ActivityFeed.Enabled = true;
+				MetricsGroup.Enabled = true;
+				AlertsGroup.Enabled = true;
+				OBSSettingsGroup.Enabled = true;
+				StreamStatsGroup.Enabled = true;
+				OBSStatsGroup.Enabled = true;
 			}
 		}
 
