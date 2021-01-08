@@ -1,34 +1,33 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
 using System.IO;
+using System.Windows.Forms;
 using TaleLearnCode.TwitchCommander.Events;
 using TaleLearnCode.TwitchCommander.Models;
+using Telerik.WinControls.Enumerations;
 using Telerik.WinControls.UI;
 
 namespace TaleLearnCode.TwitchCommander
 {
-	public partial class Main : RadForm
+	public partial class Main : Telerik.WinControls.UI.RadForm
 	{
 
-		WOPR _BricksWithChad;
-		WOPR _TaleLearlCode;
+		WOPR _bricksWithChad;
+		WOPR _taleLearnCode;
 
 		private IConfigurationRoot _config;
-		private AppSettings _appSettings = new();
-		private AzureStorageSettings _azureStorageSettings = new();
-		private TableNames _tableNames = new();
-		private TwitchSettings _bricksWithChadSettings = new();
-		private TwitchSettings _taleLearnCodeSettings = new();
+		private readonly AppSettings _appSettings = new();
+		private readonly AzureStorageSettings _azureStorageSettings = new();
+		private readonly TableNames _tableNames = new();
+		private readonly TwitchSettings _bricksWithChadSettings = new();
+		private readonly TwitchSettings _taleLearnCodeSettings = new();
 
 		public Main()
 		{
 			InitializeComponent();
-
-			TwitchClientLog.AutoSizeItems = true;
-
 			GetSettings();
-			InitializeBricksWithChad();
 			InitializeTaleLearnCode();
+			InitializeBricksWithChad();
+			FormSetup();
 		}
 
 		private void GetSettings()
@@ -49,17 +48,17 @@ namespace TaleLearnCode.TwitchCommander
 			_config.GetSection("TaleLearnCode").Bind(_taleLearnCodeSettings);
 		}
 
-		private void Connect(WOPR wopr, RadButton connectButton)
+		private void FormSetup()
 		{
-			if (connectButton.Text == "Connect")
+			ViewSelector.Items.Add(_bricksWithChad.ChannelName);
+			ViewSelector.Items.Add(_taleLearnCode.ChannelName);
+		}
+
+		private void ViewSelector_SelectedIndexChanged(object sender, Telerik.WinControls.UI.Data.PositionChangedEventArgs e)
+		{
+			if (ViewSelector.SelectedIndex > -1)
 			{
-				wopr.Connect();
-				connectButton.Text = "Disconnect";
-			}
-			else
-			{
-				wopr.Disconnect();
-				connectButton.Text = "Connect";
+				MessageBox.Show(ViewSelector.SelectedItem.Text);
 			}
 		}
 
@@ -87,8 +86,8 @@ namespace TaleLearnCode.TwitchCommander
 
 		private void InitializeBricksWithChad()
 		{
-			_BricksWithChad = new(_appSettings, _azureStorageSettings, _tableNames, _bricksWithChadSettings, true);
-			_BricksWithChad.OnLoggedEvent += BricksWithChad_OnLoggedEvent;
+			_bricksWithChad = new("BricksWithChad", _appSettings, _azureStorageSettings, _tableNames, _bricksWithChadSettings, true);
+			_bricksWithChad.OnLoggedEvent += BricksWithChad_OnLoggedEvent;
 		}
 
 		private void BricksWithChad_OnLoggedEvent(object sender, OnLoggedEventArgs e)
@@ -96,10 +95,14 @@ namespace TaleLearnCode.TwitchCommander
 			DisplayLoggedEvent(e, Properties.Resources.BricksWithChad);
 		}
 
-		private void ConnectBricksWithChad_Click(object sender, EventArgs e)
+		private void ConnectedToBricksWithChad_ValueChanged(object sender, System.EventArgs e)
 		{
-			Connect(_BricksWithChad, ConnectBricksWithChad);
+			if (ConnectedToBricksWithChad.Value)
+				_bricksWithChad.Connect();
+			else
+				_bricksWithChad.Disconnect();
 		}
+
 
 		#endregion
 
@@ -107,8 +110,8 @@ namespace TaleLearnCode.TwitchCommander
 
 		private void InitializeTaleLearnCode()
 		{
-			_TaleLearlCode = new(_appSettings, _azureStorageSettings, _tableNames, _taleLearnCodeSettings, true);
-			_TaleLearlCode.OnLoggedEvent += TaleLearnCode_OnLoggedEvent;
+			_taleLearnCode = new("TaleLearnCode", _appSettings, _azureStorageSettings, _tableNames, _taleLearnCodeSettings, true);
+			_taleLearnCode.OnLoggedEvent += TaleLearnCode_OnLoggedEvent;
 		}
 
 		private void TaleLearnCode_OnLoggedEvent(object sender, OnLoggedEventArgs e)
@@ -116,13 +119,15 @@ namespace TaleLearnCode.TwitchCommander
 			DisplayLoggedEvent(e, Properties.Resources.TaleLearnCode);
 		}
 
-		private void ConnectTaleLearnCode_Click(object sender, EventArgs e)
+		private void ConnectedToTaleLearnCode_ValueChanged(object sender, System.EventArgs e)
 		{
-			Connect(_TaleLearlCode, ConnectTaleLearnCode);
+			if (ConnectedToTaleLearnCode.Value)
+				_taleLearnCode.Connect();
+			else
+				_taleLearnCode.Disconnect();
 		}
 
 		#endregion
 
 	}
-
 }

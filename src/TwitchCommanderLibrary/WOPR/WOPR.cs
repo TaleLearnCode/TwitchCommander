@@ -23,6 +23,8 @@ namespace TaleLearnCode.TwitchCommander
 
 		private bool _IsOnline;
 
+		public string ChannelName { get; }
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="WOPR"/> class.
 		/// </summary>
@@ -32,6 +34,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// <param name="twitchSettings">The Twitch settings.</param>
 		/// <param name="viewLogs"></param>
 		public WOPR(
+			string channelName,
 			AppSettings appSettings,
 			AzureStorageSettings azureStorageSetttings,
 			TableNames tableNames,
@@ -39,6 +42,7 @@ namespace TaleLearnCode.TwitchCommander
 			bool viewLogs)
 		{
 
+			ChannelName = channelName;
 			_appSettings = appSettings;
 			_azureStorageSettings = azureStorageSetttings;
 			_tableNames = tableNames;
