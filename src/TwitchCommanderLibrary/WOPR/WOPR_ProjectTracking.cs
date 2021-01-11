@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using TaleLearnCode.TwitchCommander.Events;
 using TaleLearnCode.TwitchCommander.Models;
 
 namespace TaleLearnCode.TwitchCommander
@@ -36,9 +37,7 @@ namespace TaleLearnCode.TwitchCommander
 				_lastProjectCommandExecution = DateTime.UtcNow;
 			}
 
-
 		}
-
 
 		private void SetProject(string projectName)
 		{
@@ -48,7 +47,22 @@ namespace TaleLearnCode.TwitchCommander
 				//_projectTracking = ProjectTracking.Retrieve(_azureStorageSettings, _twitchSettings.ChannelName, projectName, _stream.Id);
 				_projectTracking = ProjectTracking.Retrieve(_azureStorageSettings, _tableNames, _twitchSettings.ChannelName, projectName, "TestStreamId");
 				SendMessage($"{_twitchSettings.ChannelName} is now working on the '{projectName}' project.");
+				InvokeOnProjectUpdated();
 			}
+		}
+
+		/// <summary>
+		/// Raised when an element of the <see cref="ProjectTracking"/> is updated.
+		/// </summary>
+		/// <remarks>Not thrown when the thee project timer is updated.</remarks>
+		public EventHandler<OnProjectUpdatedArgs> OnProjectUpdated;
+
+		/// <summary>
+		/// Invokes the <see cref="OnProjectUpdated"/> event.
+		/// </summary>
+		private void InvokeOnProjectUpdated()
+		{
+			OnProjectUpdated?.Invoke(this, new(_projectTracking));
 		}
 
 	}

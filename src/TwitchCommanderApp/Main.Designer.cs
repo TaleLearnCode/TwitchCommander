@@ -41,7 +41,7 @@
 			this.ProjectNameLabel = new Telerik.WinControls.UI.RadLabel();
 			this.ProjectName = new Telerik.WinControls.UI.RadTextBox();
 			this.ProjectTimerLabel = new Telerik.WinControls.UI.RadLabel();
-			this.radLabel8 = new Telerik.WinControls.UI.RadLabel();
+			this.ProjectTime = new Telerik.WinControls.UI.RadLabel();
 			this.Streaming = new Telerik.WinControls.UI.RadToggleSwitch();
 			this.SetProject = new Telerik.WinControls.UI.RadButton();
 			this.GetProject = new Telerik.WinControls.UI.RadToggleButton();
@@ -94,8 +94,8 @@
 			this.OBSTotalStreamTimeLabel = new Telerik.WinControls.UI.RadLabel();
 			this.OBSSettingsGroup = new Telerik.WinControls.UI.RadGroupBox();
 			this.RefreshOBSSettings = new Telerik.WinControls.UI.RadButton();
-			this.SetTransition = new Telerik.WinControls.UI.RadButton();
-			this.Transition = new Telerik.WinControls.UI.RadDropDownList();
+			this.SetOBSTransition = new Telerik.WinControls.UI.RadButton();
+			this.OBSTransition = new Telerik.WinControls.UI.RadDropDownList();
 			this.TransitionLabel = new Telerik.WinControls.UI.RadLabel();
 			this.SettOBSScene = new Telerik.WinControls.UI.RadButton();
 			this.OBSScene = new Telerik.WinControls.UI.RadDropDownList();
@@ -119,7 +119,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.ProjectNameLabel)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.ProjectName)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.ProjectTimerLabel)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.radLabel8)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.ProjectTime)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.Streaming)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.SetProject)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.GetProject)).BeginInit();
@@ -177,8 +177,8 @@
 			((System.ComponentModel.ISupportInitialize)(this.OBSSettingsGroup)).BeginInit();
 			this.OBSSettingsGroup.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.RefreshOBSSettings)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.SetTransition)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.Transition)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.SetOBSTransition)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.OBSTransition)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.TransitionLabel)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.SettOBSScene)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.OBSScene)).BeginInit();
@@ -301,13 +301,13 @@
 			this.ProjectTimerLabel.TabIndex = 12;
 			this.ProjectTimerLabel.Text = "Project Timer:";
 			// 
-			// radLabel8
+			// ProjectTime
 			// 
-			this.radLabel8.Location = new System.Drawing.Point(105, 78);
-			this.radLabel8.Name = "radLabel8";
-			this.radLabel8.Size = new System.Drawing.Size(62, 18);
-			this.radLabel8.TabIndex = 13;
-			this.radLabel8.Text = "00:00:00:00";
+			this.ProjectTime.Location = new System.Drawing.Point(105, 78);
+			this.ProjectTime.Name = "ProjectTime";
+			this.ProjectTime.Size = new System.Drawing.Size(62, 18);
+			this.ProjectTime.TabIndex = 13;
+			this.ProjectTime.Text = "00:00:00:00";
 			// 
 			// Streaming
 			// 
@@ -421,7 +421,7 @@
 			this.MetricsGroup.Controls.Add(this.ViewerCount);
 			this.MetricsGroup.Controls.Add(this.ProjectTimerLabel);
 			this.MetricsGroup.Controls.Add(this.FollwerCount);
-			this.MetricsGroup.Controls.Add(this.radLabel8);
+			this.MetricsGroup.Controls.Add(this.ProjectTime);
 			this.MetricsGroup.Controls.Add(this.SubscriberCount);
 			this.MetricsGroup.Controls.Add(this.DroppedBrickCountLabel);
 			this.MetricsGroup.Controls.Add(this.FollowerCountLabel);
@@ -776,8 +776,8 @@
 			// 
 			this.OBSSettingsGroup.AccessibleRole = System.Windows.Forms.AccessibleRole.Grouping;
 			this.OBSSettingsGroup.Controls.Add(this.RefreshOBSSettings);
-			this.OBSSettingsGroup.Controls.Add(this.SetTransition);
-			this.OBSSettingsGroup.Controls.Add(this.Transition);
+			this.OBSSettingsGroup.Controls.Add(this.SetOBSTransition);
+			this.OBSSettingsGroup.Controls.Add(this.OBSTransition);
 			this.OBSSettingsGroup.Controls.Add(this.TransitionLabel);
 			this.OBSSettingsGroup.Controls.Add(this.SettOBSScene);
 			this.OBSSettingsGroup.Controls.Add(this.OBSScene);
@@ -804,20 +804,20 @@
 			this.RefreshOBSSettings.TabIndex = 14;
 			this.RefreshOBSSettings.Text = "Refresh";
 			// 
-			// SetTransition
+			// SetOBSTransition
 			// 
-			this.SetTransition.Location = new System.Drawing.Point(173, 193);
-			this.SetTransition.Name = "SetTransition";
-			this.SetTransition.Size = new System.Drawing.Size(38, 24);
-			this.SetTransition.TabIndex = 13;
-			this.SetTransition.Text = "Set";
+			this.SetOBSTransition.Location = new System.Drawing.Point(173, 193);
+			this.SetOBSTransition.Name = "SetOBSTransition";
+			this.SetOBSTransition.Size = new System.Drawing.Size(38, 24);
+			this.SetOBSTransition.TabIndex = 13;
+			this.SetOBSTransition.Text = "Set";
 			// 
-			// Transition
+			// OBSTransition
 			// 
-			this.Transition.Location = new System.Drawing.Point(8, 196);
-			this.Transition.Name = "Transition";
-			this.Transition.Size = new System.Drawing.Size(159, 20);
-			this.Transition.TabIndex = 12;
+			this.OBSTransition.Location = new System.Drawing.Point(8, 196);
+			this.OBSTransition.Name = "OBSTransition";
+			this.OBSTransition.Size = new System.Drawing.Size(159, 20);
+			this.OBSTransition.TabIndex = 12;
 			// 
 			// TransitionLabel
 			// 
@@ -856,6 +856,7 @@
 			this.SetOBSSceneCollection.Size = new System.Drawing.Size(38, 24);
 			this.SetOBSSceneCollection.TabIndex = 7;
 			this.SetOBSSceneCollection.Text = "Set";
+			this.SetOBSSceneCollection.Click += new System.EventHandler(this.SetOBSSceneCollection_Click);
 			// 
 			// SetOBSProfile
 			// 
@@ -901,7 +902,7 @@
 			this.AutoScaleBaseSize = new System.Drawing.Size(7, 15);
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1238, 522);
+			this.ClientSize = new System.Drawing.Size(1203, 520);
 			this.Controls.Add(this.OBSSettingsGroup);
 			this.Controls.Add(this.OBSStatsGroup);
 			this.Controls.Add(this.StreamStatsGroup);
@@ -938,7 +939,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.ProjectNameLabel)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.ProjectName)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.ProjectTimerLabel)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.radLabel8)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.ProjectTime)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.Streaming)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.SetProject)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.GetProject)).EndInit();
@@ -1000,8 +1001,8 @@
 			this.OBSSettingsGroup.ResumeLayout(false);
 			this.OBSSettingsGroup.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.RefreshOBSSettings)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.SetTransition)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.Transition)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.SetOBSTransition)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.OBSTransition)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.TransitionLabel)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.SettOBSScene)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.OBSScene)).EndInit();
@@ -1033,7 +1034,7 @@
 		private Telerik.WinControls.UI.RadLabel ProjectNameLabel;
 		private Telerik.WinControls.UI.RadTextBox ProjectName;
 		private Telerik.WinControls.UI.RadLabel ProjectTimerLabel;
-		private Telerik.WinControls.UI.RadLabel radLabel8;
+		private Telerik.WinControls.UI.RadLabel ProjectTim;
 		private Telerik.WinControls.UI.RadToggleSwitch Streaming;
 		private Telerik.WinControls.UI.RadButton SetProject;
 		private Telerik.WinControls.UI.RadToggleButton GetProject;
@@ -1098,8 +1099,11 @@
 		private Telerik.WinControls.UI.RadButton SettOBSScene;
 		private Telerik.WinControls.UI.RadDropDownList OBSScene;
 		private Telerik.WinControls.UI.RadLabel TransitionLabel;
-		private Telerik.WinControls.UI.RadDropDownList Transition;
+		private Telerik.WinControls.UI.RadDropDownList OBSTransition;
 		private Telerik.WinControls.UI.RadButton SetTransition;
 		private Telerik.WinControls.UI.RadButton RefreshOBSSettings;
+		private Telerik.WinControls.UI.RadLabel er;
+		private Telerik.WinControls.UI.RadLabel ProjectTime;
+		private Telerik.WinControls.UI.RadButton SetOBSTransition;
 	}
 }
