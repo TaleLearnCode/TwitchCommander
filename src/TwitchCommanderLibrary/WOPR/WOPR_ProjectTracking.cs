@@ -39,14 +39,14 @@ namespace TaleLearnCode.TwitchCommander
 
 		}
 
-		private void SetProject(string projectName)
+		public void SetProject(string projectName)
 		{
 			if (_IsOnline)
 			{
 				// HACK: StreamId being is overridden
-				//_projectTracking = ProjectTracking.Retrieve(_azureStorageSettings, _twitchSettings.ChannelName, projectName, _stream.Id);
-				_projectTracking = ProjectTracking.Retrieve(_azureStorageSettings, _tableNames, _twitchSettings.ChannelName, projectName, "TestStreamId");
-				SendMessage($"{_twitchSettings.ChannelName} is now working on the '{projectName}' project.");
+				_projectTracking = ProjectTracking.Retrieve(_azureStorageSettings, _tableNames, _twitchSettings.ChannelName, projectName, _stream.Id);
+				//_projectTracking = ProjectTracking.Retrieve(_azureStorageSettings, _tableNames, _twitchSettings.ChannelName, projectName, "TestStreamId");
+				 SendMessage($"{_twitchSettings.ChannelName} is now working on the '{projectName}' project.");
 				InvokeOnProjectUpdated();
 			}
 		}

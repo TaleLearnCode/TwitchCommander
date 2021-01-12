@@ -17,8 +17,8 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 		public ETag ETag { get; set; }
 
 		public string ChannelName { get; set; } // PartitionKey
-		public string ProjectName { get; set; } // RowKey
-		public string StreamId { get; set; }
+		public string ProjectName { get; set; } // PartitionKey
+		public string StreamId { get; set; }  // RowKey
 		public string Details { get; set; }
 		public int ElaspedSeconds { get; set; }
 		public int DroppedBricks { get; set; }
@@ -42,8 +42,8 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 		{
 			return new ProjectTrackingEntity()
 			{
-				PartitionKey = projectTracking.ChannelName,
-				RowKey = projectTracking.ProjectName,
+				PartitionKey = $"{projectTracking.ChannelName}|{projectTracking.ProjectName}",
+				RowKey = projectTracking.StreamId,
 				ChannelName = projectTracking.ChannelName,
 				ProjectName = projectTracking.ProjectName,
 				StreamId = projectTracking.StreamId,
@@ -70,22 +70,27 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 			return projectTrackingEntity.ToProjectTracking();
 		}
 
-		public static IEnumerable<ProjectTracking> RetrieveForProject(AzureStorageSettings azureStorageSettings, TableNames tableNames, string channelName, string projectName)
+		public static IEnumerable<ProjectTracking> RetrieveForProject(AzureStorageSettings azureStorageSettings, TableNames tableNames, string channelName, string projectName, string streamId)
 		{
 			return AzureStorageHelper.GetTableClient(azureStorageSettings, tableNames.ProjectTracking)
-				.Query<ProjectTrackingEntity>(t => t.PartitionKey == channelName && t.RowKey == projectName).ToList()
+				.Query<ProjectTrackingEntity>(t => t.PartitionKey == GetPartitionKey(channelName, projectName) && t.RowKey == streamId).ToList()
 				.Select(l => l.ToProjectTracking());
 		}
 
 		public static ProjectTracking RetrieveForStream(AzureStorageSettings azureStorageSettings, TableNames tableNames, string channelName, string projectName, string streamId)
 		{
 			ProjectTrackingEntity results = AzureStorageHelper.GetTableClient(azureStorageSettings, tableNames.ProjectTracking)
-				.Query<ProjectTrackingEntity>(t => t.PartitionKey == channelName && t.RowKey == projectName && t.StreamId == streamId)
+				.Query<ProjectTrackingEntity>(t => t.PartitionKey == GetPartitionKey(channelName, projectName) && t.RowKey == streamId && t.StreamId == streamId)
 				.SingleOrDefault();
 			if (results != null)
 				return results.ToProjectTracking();
 			else
 				return null;
+		}
+
+		private static string GetPartitionKey(string channelName, string partitionKey)
+		{
+			return $"{channelName}|{partitionKey}";
 		}
 
 	}

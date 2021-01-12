@@ -202,6 +202,7 @@
 			// 
 			// TwitchClientLog
 			// 
+			this.TwitchClientLog.AutoSizeItems = true;
 			this.TwitchClientLog.Location = new System.Drawing.Point(12, 12);
 			this.TwitchClientLog.Name = "TwitchClientLog";
 			this.TwitchClientLog.Size = new System.Drawing.Size(264, 501);
@@ -326,6 +327,7 @@
 			this.SetProject.Size = new System.Drawing.Size(84, 24);
 			this.SetProject.TabIndex = 15;
 			this.SetProject.Text = "Set Project";
+			this.SetProject.Click += new System.EventHandler(this.SetProject_Click);
 			// 
 			// GetProject
 			// 
@@ -902,7 +904,7 @@
 			this.AutoScaleBaseSize = new System.Drawing.Size(7, 15);
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1203, 520);
+			this.ClientSize = new System.Drawing.Size(1263, 518);
 			this.Controls.Add(this.OBSSettingsGroup);
 			this.Controls.Add(this.OBSStatsGroup);
 			this.Controls.Add(this.StreamStatsGroup);

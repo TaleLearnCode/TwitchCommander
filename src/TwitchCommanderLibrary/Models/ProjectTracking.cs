@@ -44,7 +44,7 @@ namespace TaleLearnCode.TwitchCommander.Models
 				StreamId = streamId
 			};
 
-			List<ProjectTracking> projectTrackingRecords = ProjectTrackingEntity.RetrieveForProject(azureStorageSettings, tableNames, channelName, projectName).ToList();
+			List<ProjectTracking> projectTrackingRecords = ProjectTrackingEntity.RetrieveForProject(azureStorageSettings, tableNames, channelName, projectName, streamId).ToList();
 			if (!projectTrackingRecords.Any(t => t.StreamId == streamId))
 			{
 				projectTrackingRecords.Add(ProjectTrackingEntity.Save(azureStorageSettings, tableNames, projectTracking));
@@ -54,7 +54,7 @@ namespace TaleLearnCode.TwitchCommander.Models
 			{
 				projectTracking.OverallDroppedBricks += projectTrackingRecord.DroppedBricks;
 				projectTracking.OverallOofs += projectTrackingRecord.Oofs;
-				projectTracking.OverallElapsedTime.Add(new TimeSpan(0, 0, projectTrackingRecord.ElaspedSeconds));
+				projectTracking.OverallElapsedTime = projectTracking.OverallElapsedTime.Add(new TimeSpan(0, 0, projectTrackingRecord.ElaspedSeconds));
 
 				if (projectTrackingRecord.StreamId == projectTracking.StreamId)
 				{

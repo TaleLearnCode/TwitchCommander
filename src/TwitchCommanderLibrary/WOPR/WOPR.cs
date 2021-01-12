@@ -101,8 +101,11 @@ namespace TaleLearnCode.TwitchCommander
 		{
 
 			_twitchMonitor = new(_twitchAPI, _appSettings.StreamMonitorCheckInterval);
-			_twitchMonitor.SetChannelsById(new List<string> { _twitchSettings.ChannelName });
+			_twitchMonitor.SetChannelsByName(new List<string> { _twitchSettings.ChannelName });
 
+			_twitchMonitor.OnStreamOffline += TwitchMonitor_OnStreamOffline;
+			_twitchMonitor.OnStreamOnline += TwitchMonitor_OnStreamOnline;
+			_twitchMonitor.OnStreamUpdate += TwitchMonitor_OnStreamUpdate;
 		}
 
 		/// <summary>

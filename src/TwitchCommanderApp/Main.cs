@@ -233,7 +233,7 @@ namespace TaleLearnCode.TwitchCommander
 
 		private string PrintNumber(int number)
 		{
-			return number.ToString("N", CultureInfo.InvariantCulture);
+			return number.ToString("N0", CultureInfo.InvariantCulture);
 		}
 
 		#endregion
@@ -241,6 +241,18 @@ namespace TaleLearnCode.TwitchCommander
 		private void SetOBSSceneCollection_Click(object sender, System.EventArgs e)
 		{
 
+		}
+
+		private void SetProject_Click(object sender, EventArgs e)
+		{
+			if (ViewSelector.Items[ViewSelector.SelectedIndex].Text == _bricksWithChad.ChannelName)
+			{
+				_bricksWithChad.SetProject(ProjectName.Text);
+			}
+			else if (ViewSelector.Items[ViewSelector.SelectedIndex].Text == _taleLearnCode.ChannelName)
+			{
+				_taleLearnCode.SetProject(ProjectName.Text);
+			}
 		}
 	}
 }
