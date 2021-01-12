@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.ViewSelector = new Telerik.WinControls.UI.RadDropDownList();
 			this.TwitchClientLog = new Telerik.WinControls.UI.RadListControl();
 			this.radLabel1 = new Telerik.WinControls.UI.RadLabel();
@@ -44,7 +45,6 @@
 			this.ProjectTime = new Telerik.WinControls.UI.RadLabel();
 			this.Streaming = new Telerik.WinControls.UI.RadToggleSwitch();
 			this.SetProject = new Telerik.WinControls.UI.RadButton();
-			this.GetProject = new Telerik.WinControls.UI.RadToggleButton();
 			this.SubscriberCount = new Telerik.WinControls.UI.RadLabel();
 			this.FollowerCountLabel = new Telerik.WinControls.UI.RadLabel();
 			this.FollwerCount = new Telerik.WinControls.UI.RadLabel();
@@ -106,6 +106,7 @@
 			this.OBSSceneLabel = new Telerik.WinControls.UI.RadLabel();
 			this.OBSSceneCollectionLabel = new Telerik.WinControls.UI.RadLabel();
 			this.OBSProfileLabel = new Telerik.WinControls.UI.RadLabel();
+			this.timer = new System.Windows.Forms.Timer(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.ViewSelector)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.TwitchClientLog)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.radLabel1)).BeginInit();
@@ -122,7 +123,6 @@
 			((System.ComponentModel.ISupportInitialize)(this.ProjectTime)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.Streaming)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.SetProject)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.GetProject)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.SubscriberCount)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.FollowerCountLabel)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.FollwerCount)).BeginInit();
@@ -322,20 +322,12 @@
 			// 
 			// SetProject
 			// 
-			this.SetProject.Location = new System.Drawing.Point(122, 48);
+			this.SetProject.Location = new System.Drawing.Point(212, 48);
 			this.SetProject.Name = "SetProject";
 			this.SetProject.Size = new System.Drawing.Size(84, 24);
 			this.SetProject.TabIndex = 15;
 			this.SetProject.Text = "Set Project";
 			this.SetProject.Click += new System.EventHandler(this.SetProject_Click);
-			// 
-			// GetProject
-			// 
-			this.GetProject.Location = new System.Drawing.Point(212, 48);
-			this.GetProject.Name = "GetProject";
-			this.GetProject.Size = new System.Drawing.Size(84, 24);
-			this.GetProject.TabIndex = 16;
-			this.GetProject.Text = "Get Project";
 			// 
 			// SubscriberCount
 			// 
@@ -414,7 +406,6 @@
 			this.MetricsGroup.AccessibleRole = System.Windows.Forms.AccessibleRole.Grouping;
 			this.MetricsGroup.Controls.Add(this.SubscriberCountLabel);
 			this.MetricsGroup.Controls.Add(this.ProjectNameLabel);
-			this.MetricsGroup.Controls.Add(this.GetProject);
 			this.MetricsGroup.Controls.Add(this.OofCount);
 			this.MetricsGroup.Controls.Add(this.SetProject);
 			this.MetricsGroup.Controls.Add(this.ProjectName);
@@ -899,12 +890,17 @@
 			this.OBSProfileLabel.TabIndex = 0;
 			this.OBSProfileLabel.Text = "Profile:";
 			// 
+			// timer
+			// 
+			this.timer.Interval = 1000;
+			this.timer.Tick += new System.EventHandler(this.timer_Tick);
+			// 
 			// Main
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(7, 15);
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1263, 518);
+			this.ClientSize = new System.Drawing.Size(1311, 546);
 			this.Controls.Add(this.OBSSettingsGroup);
 			this.Controls.Add(this.OBSStatsGroup);
 			this.Controls.Add(this.StreamStatsGroup);
@@ -944,7 +940,6 @@
 			((System.ComponentModel.ISupportInitialize)(this.ProjectTime)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.Streaming)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.SetProject)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.GetProject)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.SubscriberCount)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.FollowerCountLabel)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.FollwerCount)).EndInit();
@@ -1039,7 +1034,6 @@
 		private Telerik.WinControls.UI.RadLabel ProjectTim;
 		private Telerik.WinControls.UI.RadToggleSwitch Streaming;
 		private Telerik.WinControls.UI.RadButton SetProject;
-		private Telerik.WinControls.UI.RadToggleButton GetProject;
 		private Telerik.WinControls.UI.RadLabel SubscriberCount;
 		private Telerik.WinControls.UI.RadLabel FollowerCountLabel;
 		private Telerik.WinControls.UI.RadLabel FollwerCount;
@@ -1107,5 +1101,6 @@
 		private Telerik.WinControls.UI.RadLabel er;
 		private Telerik.WinControls.UI.RadLabel ProjectTime;
 		private Telerik.WinControls.UI.RadButton SetOBSTransition;
+		private System.Windows.Forms.Timer timer;
 	}
 }

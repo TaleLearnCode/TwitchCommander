@@ -34,18 +34,19 @@ namespace TaleLearnCode.TwitchCommander
 
 			_botRuntime = _botRuntime.Add(intervalTime);
 
-			if (_IsOnline && _projectTracking != null)
+			// HACK: Removing _IsOnline check to test while not streaming
+			if (_IsOnline && ProjectTracking != null)
 			//if (_projectTracking != null)
 			{
-				_projectTracking.ElaspedSeconds++;
-				_projectTracking.OverallElapsedTime = _projectTracking.OverallElapsedTime.Add(intervalTime);
-
-				Console.WriteLine(_projectTracking.OverallElapsedTime.ToString(@"hh\:mm\:ss"));
-
+				ProjectTracking.ElaspedSeconds++;
+				ProjectTracking.OverallElapsedTime = ProjectTracking.OverallElapsedTime.Add(intervalTime);
 			}
 
 			if (_botRuntime.TotalSeconds % 60 == 0)
 			{
+				if (_IsOnline && ProjectTracking != null)
+					ProjectTrackingEntity.Save(_azureStorageSettings, _tableNames, ProjectTracking);
+
 				List<BotTimer> botTimers = BotTimerEntity.Retrieve(_azureStorageSettings, _tableNames, _twitchSettings.ChannelName);
 				foreach (BotTimer botTimer in botTimers)
 				{

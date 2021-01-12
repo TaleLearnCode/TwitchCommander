@@ -28,6 +28,7 @@ namespace TaleLearnCode.TwitchCommander
 			InitializeTaleLearnCode();
 			InitializeBricksWithChad();
 			FormSetup();
+			timer.Enabled = true;
 		}
 
 		private void GetSettings()
@@ -253,6 +254,15 @@ namespace TaleLearnCode.TwitchCommander
 			{
 				_taleLearnCode.SetProject(ProjectName.Text);
 			}
+		}
+
+		private void timer_Tick(object sender, EventArgs e)
+		{
+			if (ViewSelector.SelectedIndex > -1)
+				if (_bricksWithChad.ProjectTracking != null && ViewSelector.Items[ViewSelector.SelectedIndex].Text == _bricksWithChad.ChannelName)
+					DisplayProjectTime(_bricksWithChad.ProjectTracking.OverallElapsedTime);
+				else if (_taleLearnCode.ProjectTracking != null && ViewSelector.Items[ViewSelector.SelectedIndex].Text == _taleLearnCode.ChannelName)
+					DisplayProjectTime(_taleLearnCode.ProjectTracking.OverallElapsedTime);
 		}
 	}
 }

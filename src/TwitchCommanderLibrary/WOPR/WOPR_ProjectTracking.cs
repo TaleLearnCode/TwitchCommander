@@ -9,12 +9,12 @@ namespace TaleLearnCode.TwitchCommander
 	public partial class WOPR
 	{
 
-		private ProjectTracking _projectTracking = null;
+		public ProjectTracking ProjectTracking { get; private set; }
 		private DateTime? _lastProjectCommandExecution;
 
 		private void EnsureProjectIsSet()
 		{
-			if (_projectTracking == null && _IsOnline)
+			if (ProjectTracking == null && _IsOnline)
 				SendMessage($"Hey @{_twitchSettings.ChannelName}, don't forget to set the project you are working on.");
 		}
 
@@ -26,9 +26,9 @@ namespace TaleLearnCode.TwitchCommander
 			}
 			else if (_lastProjectCommandExecution == null || (DateTime)_lastProjectCommandExecution <= DateTime.UtcNow.AddMinutes(-1))
 			{
-				if (_projectTracking != null)
+				if (ProjectTracking != null)
 				{
-					SendMessage($"{_twitchSettings.ChannelName} is working on the '{_projectTracking.ProjectName}; project.");
+					SendMessage($"{_twitchSettings.ChannelName} is working on the '{ProjectTracking.ProjectName}; project.");
 				}
 				else
 				{
@@ -44,7 +44,7 @@ namespace TaleLearnCode.TwitchCommander
 			if (_IsOnline)
 			{
 				// HACK: StreamId being is overridden
-				_projectTracking = ProjectTracking.Retrieve(_azureStorageSettings, _tableNames, _twitchSettings.ChannelName, projectName, _stream.Id);
+				ProjectTracking = ProjectTracking.Retrieve(_azureStorageSettings, _tableNames, _twitchSettings.ChannelName, projectName, _stream.Id);
 				//_projectTracking = ProjectTracking.Retrieve(_azureStorageSettings, _tableNames, _twitchSettings.ChannelName, projectName, "TestStreamId");
 				 SendMessage($"{_twitchSettings.ChannelName} is now working on the '{projectName}' project.");
 				InvokeOnProjectUpdated();
@@ -52,7 +52,7 @@ namespace TaleLearnCode.TwitchCommander
 		}
 
 		/// <summary>
-		/// Raised when an element of the <see cref="ProjectTracking"/> is updated.
+		/// Raised when an element of the <see cref="Models.ProjectTracking"/> is updated.
 		/// </summary>
 		/// <remarks>Not thrown when the thee project timer is updated.</remarks>
 		public EventHandler<OnProjectUpdatedArgs> OnProjectUpdated;
@@ -62,7 +62,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// </summary>
 		private void InvokeOnProjectUpdated()
 		{
-			OnProjectUpdated?.Invoke(this, new(_projectTracking));
+			OnProjectUpdated?.Invoke(this, new(ProjectTracking));
 		}
 
 	}
