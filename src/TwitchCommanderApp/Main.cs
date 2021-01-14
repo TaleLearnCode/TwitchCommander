@@ -24,11 +24,11 @@ namespace TaleLearnCode.TwitchCommander
 		public Main()
 		{
 			InitializeComponent();
-			GetSettings();
-			InitializeTaleLearnCode();
-			InitializeBricksWithChad();
-			FormSetup();
-			timer.Enabled = true;
+			//GetSettings();
+			//InitializeTaleLearnCode();
+			//InitializeBricksWithChad();
+			//FormSetup();
+			//timer.Enabled = true;
 		}
 
 		private void GetSettings()

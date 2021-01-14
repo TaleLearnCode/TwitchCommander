@@ -900,7 +900,7 @@
 			this.AutoScaleBaseSize = new System.Drawing.Size(7, 15);
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1311, 546);
+			this.ClientSize = new System.Drawing.Size(1371, 916);
 			this.Controls.Add(this.OBSSettingsGroup);
 			this.Controls.Add(this.OBSStatsGroup);
 			this.Controls.Add(this.StreamStatsGroup);
