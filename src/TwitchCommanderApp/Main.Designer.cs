@@ -91,8 +91,8 @@
 			this.OBSSceneCollectionLabel = new Telerik.WinControls.UI.RadLabel();
 			this.OBSProfileLabel = new Telerik.WinControls.UI.RadLabel();
 			this.timer = new System.Windows.Forms.Timer(this.components);
-			this.Metrics = new TaleLearnCode.TwitchCommander.UserControls.Main_Metrics();
 			this.FakeOnline = new Telerik.WinControls.UI.RadCheckBox();
+			this.ProjectInfo = new TaleLearnCode.TwitchCommander.UserControls.ProjectInfo();
 			((System.ComponentModel.ISupportInitialize)(this.ViewSelector)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.TwitchClientLog)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.radLabel1)).BeginInit();
@@ -718,14 +718,6 @@
 			this.timer.Interval = 1000;
 			this.timer.Tick += new System.EventHandler(this.timer_Tick);
 			// 
-			// Metrics
-			// 
-			this.Metrics.Location = new System.Drawing.Point(520, 61);
-			this.Metrics.Name = "Metrics";
-			this.Metrics.Size = new System.Drawing.Size(305, 255);
-			this.Metrics.TabIndex = 33;
-			this.Metrics.WOPR = null;
-			// 
 			// FakeOnline
 			// 
 			this.FakeOnline.Location = new System.Drawing.Point(711, 48);
@@ -734,14 +726,23 @@
 			this.FakeOnline.TabIndex = 34;
 			this.FakeOnline.Text = "Fake Online";
 			// 
+			// ProjectInfo
+			// 
+			this.ProjectInfo.Enabled = false;
+			this.ProjectInfo.Location = new System.Drawing.Point(520, 72);
+			this.ProjectInfo.Name = "ProjectInfo";
+			this.ProjectInfo.Size = new System.Drawing.Size(207, 148);
+			this.ProjectInfo.TabIndex = 35;
+			this.ProjectInfo.WOPR = null;
+			// 
 			// Main
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(7, 15);
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1407, 880);
+			this.ClientSize = new System.Drawing.Size(1443, 844);
+			this.Controls.Add(this.ProjectInfo);
 			this.Controls.Add(this.FakeOnline);
-			this.Controls.Add(this.Metrics);
 			this.Controls.Add(this.OBSSettingsGroup);
 			this.Controls.Add(this.OBSStatsGroup);
 			this.Controls.Add(this.StreamStatsGroup);
@@ -910,7 +911,7 @@
 		private Telerik.WinControls.UI.RadButton SetOBSTransition;
 		private System.Windows.Forms.Timer timer;
 		private UserControls.Main_Metrics main_Metrics;
-		private UserControls.Main_Metrics Metrics;
 		private Telerik.WinControls.UI.RadCheckBox FakeOnline;
+		private UserControls.ProjectInfo ProjectInfo;
 	}
 }
