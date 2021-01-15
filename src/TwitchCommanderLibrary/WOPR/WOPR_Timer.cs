@@ -35,7 +35,7 @@ namespace TaleLearnCode.TwitchCommander
 			_botRuntime = _botRuntime.Add(intervalTime);
 
 			// HACK: Removing _IsOnline check to test while not streaming
-			if (_IsOnline && ProjectTracking != null)
+			if ((_IsOnline || _fakeOnline) && ProjectTracking != null)
 			//if (_projectTracking != null)
 			{
 				ProjectTracking.ElaspedSeconds++;
@@ -44,13 +44,13 @@ namespace TaleLearnCode.TwitchCommander
 
 			if (_botRuntime.TotalSeconds % 60 == 0)
 			{
-				if (_IsOnline && ProjectTracking != null)
+				if ((_IsOnline || _fakeOnline) && ProjectTracking != null)
 					ProjectTrackingEntity.Save(_azureStorageSettings, _tableNames, ProjectTracking);
 
 				List<BotTimer> botTimers = BotTimerEntity.Retrieve(_azureStorageSettings, _tableNames, _twitchSettings.ChannelName);
 				foreach (BotTimer botTimer in botTimers)
 				{
-					if ((_IsOnline && botTimer.NextOnlineExecution <= DateTime.UtcNow) || (!_IsOnline && botTimer.NextOfflineExecution <= DateTime.UtcNow))
+					if (((_IsOnline || _fakeOnline) && botTimer.NextOnlineExecution <= DateTime.UtcNow) || (!_IsOnline && botTimer.NextOfflineExecution <= DateTime.UtcNow))
 					{
 						bool chatThresholdMet = _receivedChatMessages.Where(c => c.Timestamp > DateTime.UtcNow.AddMinutes(-5).ToUnixTimeSeconds()).ToList().Count >= botTimer.ChatLines;
 						if (chatThresholdMet)

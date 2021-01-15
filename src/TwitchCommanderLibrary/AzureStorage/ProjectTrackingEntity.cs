@@ -70,17 +70,17 @@ namespace TaleLearnCode.TwitchCommander.AzureStorage
 			return projectTrackingEntity.ToProjectTracking();
 		}
 
-		public static IEnumerable<ProjectTracking> RetrieveForProject(AzureStorageSettings azureStorageSettings, TableNames tableNames, string channelName, string projectName, string streamId)
+		public static IEnumerable<ProjectTracking> RetrieveForProject(AzureStorageSettings azureStorageSettings, TableNames tableNames, string channelName, string projectName)
 		{
 			return AzureStorageHelper.GetTableClient(azureStorageSettings, tableNames.ProjectTracking)
-				.Query<ProjectTrackingEntity>(t => t.PartitionKey == GetPartitionKey(channelName, projectName) && t.RowKey == streamId).ToList()
+				.Query<ProjectTrackingEntity>(t => t.PartitionKey == GetPartitionKey(channelName, projectName)).ToList()
 				.Select(l => l.ToProjectTracking());
 		}
 
 		public static ProjectTracking RetrieveForStream(AzureStorageSettings azureStorageSettings, TableNames tableNames, string channelName, string projectName, string streamId)
 		{
 			ProjectTrackingEntity results = AzureStorageHelper.GetTableClient(azureStorageSettings, tableNames.ProjectTracking)
-				.Query<ProjectTrackingEntity>(t => t.PartitionKey == GetPartitionKey(channelName, projectName) && t.RowKey == streamId && t.StreamId == streamId)
+				.Query<ProjectTrackingEntity>(t => t.PartitionKey == GetPartitionKey(channelName, projectName) && t.RowKey == streamId)
 				.SingleOrDefault();
 			if (results != null)
 				return results.ToProjectTracking();

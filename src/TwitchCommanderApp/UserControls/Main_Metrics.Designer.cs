@@ -120,6 +120,7 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 			this.SetProject.Size = new System.Drawing.Size(84, 24);
 			this.SetProject.TabIndex = 15;
 			this.SetProject.Text = "Set Project";
+			this.SetProject.Click += new System.EventHandler(this.SetProject_Click);
 			// 
 			// ProjectName
 			// 

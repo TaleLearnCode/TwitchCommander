@@ -44,7 +44,7 @@ namespace TaleLearnCode.TwitchCommander.Models
 				StreamId = streamId
 			};
 
-			List<ProjectTracking> projectTrackingRecords = ProjectTrackingEntity.RetrieveForProject(azureStorageSettings, tableNames, channelName, projectName, streamId).ToList();
+			List<ProjectTracking> projectTrackingRecords = ProjectTrackingEntity.RetrieveForProject(azureStorageSettings, tableNames, channelName, projectName).ToList();
 			if (!projectTrackingRecords.Any(t => t.StreamId == streamId))
 			{
 				projectTrackingRecords.Add(ProjectTrackingEntity.Save(azureStorageSettings, tableNames, projectTracking));

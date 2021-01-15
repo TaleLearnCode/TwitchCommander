@@ -22,6 +22,7 @@ namespace TaleLearnCode.TwitchCommander
 		private LiveStreamMonitorService _twitchMonitor;
 
 		private bool _IsOnline;
+		private bool _fakeOnline;
 
 		public string ChannelName { get; }
 
@@ -57,8 +58,9 @@ namespace TaleLearnCode.TwitchCommander
 		/// <summary>
 		/// Starts monitoring Twitch in order to perform the necessary actions.
 		/// </summary>
-		public void Connect()
+		public void Connect(bool fakeOnline = false)
 		{
+			_fakeOnline = fakeOnline;
 			_twitchClient.Connect();
 			_twitchMonitor.Start();
 			ConfigureTimers();

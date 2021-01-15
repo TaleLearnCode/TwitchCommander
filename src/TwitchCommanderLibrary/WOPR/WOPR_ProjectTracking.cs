@@ -14,7 +14,7 @@ namespace TaleLearnCode.TwitchCommander
 
 		private void EnsureProjectIsSet()
 		{
-			if (ProjectTracking == null && _IsOnline)
+			if (ProjectTracking == null && (_IsOnline || _fakeOnline))
 				SendMessage($"Hey @{_twitchSettings.ChannelName}, don't forget to set the project you are working on.");
 		}
 
@@ -41,10 +41,10 @@ namespace TaleLearnCode.TwitchCommander
 
 		public void SetProject(string projectName)
 		{
-			if (_IsOnline)
+			if (_IsOnline || _fakeOnline)
 			{
 				// HACK: StreamId being is overridden
-				ProjectTracking = ProjectTracking.Retrieve(_azureStorageSettings, _tableNames, _twitchSettings.ChannelName, projectName, _stream.Id);
+				ProjectTracking = ProjectTracking.Retrieve(_azureStorageSettings, _tableNames, _twitchSettings.ChannelName, projectName, (_fakeOnline) ? "TestStreamId" : _stream.Id);
 				//_projectTracking = ProjectTracking.Retrieve(_azureStorageSettings, _tableNames, _twitchSettings.ChannelName, projectName, "TestStreamId");
 				 SendMessage($"{_twitchSettings.ChannelName} is now working on the '{projectName}' project.");
 				InvokeOnProjectUpdated();

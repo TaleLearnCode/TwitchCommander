@@ -47,9 +47,9 @@ namespace TaleLearnCode.TwitchCommander
 					else
 					{
 
-						if (_IsOnline && !chatCommand.IsEnabledWhenStreaming)
+						if ((_IsOnline || _fakeOnline) && !chatCommand.IsEnabledWhenStreaming)
 							_twitchClient.SendMessage(e.Command.ChatMessage.BotUsername, $"The {chatCommand.CommandName} is not available while {e.Command.ChatMessage.Channel} is broadcasting.");
-						if (!_IsOnline && !chatCommand.IsEnabledWhenNotStreaming)
+						if (!(_IsOnline || _fakeOnline) && !chatCommand.IsEnabledWhenNotStreaming)
 							_twitchClient.SendMessage(e.Command.ChatMessage.BotUsername, $"The {chatCommand.CommandName} is only available when {e.Command.ChatMessage.Channel} is broadcasting.");
 
 						string responseMessage;

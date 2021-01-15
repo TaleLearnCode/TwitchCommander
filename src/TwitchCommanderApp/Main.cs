@@ -24,11 +24,15 @@ namespace TaleLearnCode.TwitchCommander
 		public Main()
 		{
 			InitializeComponent();
-			//GetSettings();
-			//InitializeTaleLearnCode();
-			//InitializeBricksWithChad();
-			//FormSetup();
-			//timer.Enabled = true;
+			GetSettings();
+			InitializeTaleLearnCode();
+			InitializeBricksWithChad();
+			FormSetup();
+			timer.Enabled = true;
+
+
+
+
 		}
 
 		private void GetSettings()
@@ -59,9 +63,19 @@ namespace TaleLearnCode.TwitchCommander
 		{
 			if (ViewSelector.SelectedIndex > -1)
 			{
+
+				WOPR wopr = null;
+				if (ViewSelector.Items[ViewSelector.SelectedIndex].Text == _bricksWithChad.ChannelName)
+					wopr = _bricksWithChad;
+				else if (ViewSelector.Items[ViewSelector.SelectedIndex].Text == _taleLearnCode.ChannelName)
+					wopr = _taleLearnCode;
+
 				ActivityFeedLabel.Enabled = true;
 				ActivityFeed.Enabled = true;
-				MetricsGroup.Enabled = true;
+				
+				Metrics.Enabled = true;
+				Metrics.WOPR = wopr;
+				
 				AlertsGroup.Enabled = true;
 				OBSSettingsGroup.Enabled = true;
 				StreamStatsGroup.Enabled = true;
@@ -89,87 +103,87 @@ namespace TaleLearnCode.TwitchCommander
 			}
 		}
 
-		#region Metrics Group
+		//#region Metrics Group
 
-		delegate void DisplayProjectNameCallback(string projectName);
+		//delegate void DisplayProjectNameCallback(string projectName);
 
-		public void DisplayProjectName(string projectName)
-		{
-			if (ProjectName.InvokeRequired)
-				Invoke(new DisplayProjectNameCallback(DisplayProjectName), new object[] { projectName });
-			else
-				ProjectName.Text = projectName;
-		}
+		//public void DisplayProjectName(string projectName)
+		//{
+		//	if (ProjectName.InvokeRequired)
+		//		Invoke(new DisplayProjectNameCallback(DisplayProjectName), new object[] { projectName });
+		//	else
+		//		ProjectName.Text = projectName;
+		//}
 
-		delegate void DisplayProjectTimeCallback(TimeSpan projectTimer);
+		//delegate void DisplayProjectTimeCallback(TimeSpan projectTimer);
 
-		public void DisplayProjectTime(TimeSpan projectTimer)
-		{
-			if (ProjectTime.InvokeRequired)
-				Invoke(new DisplayProjectTimeCallback(DisplayProjectTime), new object[] { projectTimer });
-			else
-				ProjectTime.Text = projectTimer.ToString(@"hh\:mm\:ss");
-		}
+		//public void DisplayProjectTime(TimeSpan projectTimer)
+		//{
+		//	if (ProjectTime.InvokeRequired)
+		//		Invoke(new DisplayProjectTimeCallback(DisplayProjectTime), new object[] { projectTimer });
+		//	else
+		//		ProjectTime.Text = projectTimer.ToString(@"hh\:mm\:ss");
+		//}
 
-		delegate void DisplaySubscriberCountCallback(int subscriberCount);
+		//delegate void DisplaySubscriberCountCallback(int subscriberCount);
 
-		public void DisplaySubscriberCount(int subscriberCount)
-		{
-			if (SubscriberCount.InvokeRequired)
-				Invoke(new DisplaySubscriberCountCallback(DisplaySubscriberCount), new object[] { subscriberCount });
-			else
-				SubscriberCount.Text = PrintNumber(subscriberCount);
-		}
+		//public void DisplaySubscriberCount(int subscriberCount)
+		//{
+		//	if (SubscriberCount.InvokeRequired)
+		//		Invoke(new DisplaySubscriberCountCallback(DisplaySubscriberCount), new object[] { subscriberCount });
+		//	else
+		//		SubscriberCount.Text = PrintNumber(subscriberCount);
+		//}
 
-		delegate void DisplayFollowerCountCallback(int followerCount);
+		//delegate void DisplayFollowerCountCallback(int followerCount);
 
-		public void DisplayFollowerCount(int followerCount)
-		{
-			if (FollwerCount.InvokeRequired)
-				Invoke(new DisplayFollowerCountCallback(DisplayFollowerCount), new object[] { followerCount });
-			else
-				FollwerCount.Text = PrintNumber(followerCount);
-		}
+		//public void DisplayFollowerCount(int followerCount)
+		//{
+		//	if (FollwerCount.InvokeRequired)
+		//		Invoke(new DisplayFollowerCountCallback(DisplayFollowerCount), new object[] { followerCount });
+		//	else
+		//		FollwerCount.Text = PrintNumber(followerCount);
+		//}
 
-		delegate void DisplayViewerCountCallback(int viewerCount);
+		//delegate void DisplayViewerCountCallback(int viewerCount);
 
-		public void DisplayViewerCount(int viewerCount)
-		{
-			if (ViewerCount.InvokeRequired)
-				Invoke(new DisplayViewerCountCallback(DisplayViewerCount), new object[] { viewerCount });
-			else
-				ViewerCount.Text = PrintNumber(viewerCount);
-		}
+		//public void DisplayViewerCount(int viewerCount)
+		//{
+		//	if (ViewerCount.InvokeRequired)
+		//		Invoke(new DisplayViewerCountCallback(DisplayViewerCount), new object[] { viewerCount });
+		//	else
+		//		ViewerCount.Text = PrintNumber(viewerCount);
+		//}
 
-		delegate void DisplayDroppedBrickCountCallback(int currentDroppedBricks, int overallDroppedBricks);
+		//delegate void DisplayDroppedBrickCountCallback(int currentDroppedBricks, int overallDroppedBricks);
 
-		public void DisplayDroppedBrickCount(int currentDroppedBricks, int overallDroppedBricks)
-		{
-			if (DroppedBrickCount.InvokeRequired)
-				Invoke(new DisplayDroppedBrickCountCallback(DisplayDroppedBrickCount), new object[] { currentDroppedBricks, overallDroppedBricks });
-			else
-				DroppedBrickCount.Text = $"{PrintNumber(currentDroppedBricks)} / {PrintNumber(overallDroppedBricks)}";
-		}
+		//public void DisplayDroppedBrickCount(int currentDroppedBricks, int overallDroppedBricks)
+		//{
+		//	if (DroppedBrickCount.InvokeRequired)
+		//		Invoke(new DisplayDroppedBrickCountCallback(DisplayDroppedBrickCount), new object[] { currentDroppedBricks, overallDroppedBricks });
+		//	else
+		//		DroppedBrickCount.Text = $"{PrintNumber(currentDroppedBricks)} / {PrintNumber(overallDroppedBricks)}";
+		//}
 
-		delegate void DisplayOofCountCallback(int currentOffs, int overallOofs);
+		//delegate void DisplayOofCountCallback(int currentOffs, int overallOofs);
 
-		public void DisplayOofCount(int currentOofs, int overallOofs)
-		{
-			if (OofCount.InvokeRequired)
-				Invoke(new DisplayOofCountCallback(DisplayOofCount), new object[] { currentOofs, overallOofs });
-			else
-				OofCount.Text = $"{PrintNumber(currentOofs)} / {PrintNumber(overallOofs)}";
-		}
+		//public void DisplayOofCount(int currentOofs, int overallOofs)
+		//{
+		//	if (OofCount.InvokeRequired)
+		//		Invoke(new DisplayOofCountCallback(DisplayOofCount), new object[] { currentOofs, overallOofs });
+		//	else
+		//		OofCount.Text = $"{PrintNumber(currentOofs)} / {PrintNumber(overallOofs)}";
+		//}
 
-		private void DisplayProjectInformation(OnProjectUpdatedArgs onProjectUpdatedArgs)
-		{
-			DisplayProjectName(onProjectUpdatedArgs.ProjectName);
-			DisplayProjectTime(onProjectUpdatedArgs.ProjectTimer);
-			if (DroppedBrickCount.Visible) DisplayDroppedBrickCount(onProjectUpdatedArgs.DroppedBricks, onProjectUpdatedArgs.OverallDroppedBricks);
-			if (OofCount.Visible) DisplayOofCount(onProjectUpdatedArgs.Oofs, onProjectUpdatedArgs.OverallOofs);
-		}
+		//private void DisplayProjectInformation(OnProjectUpdatedArgs onProjectUpdatedArgs)
+		//{
+		//	DisplayProjectName(onProjectUpdatedArgs.ProjectName);
+		//	DisplayProjectTime(onProjectUpdatedArgs.ProjectTimer);
+		//	if (DroppedBrickCount.Visible) DisplayDroppedBrickCount(onProjectUpdatedArgs.DroppedBricks, onProjectUpdatedArgs.OverallDroppedBricks);
+		//	if (OofCount.Visible) DisplayOofCount(onProjectUpdatedArgs.Oofs, onProjectUpdatedArgs.OverallOofs);
+		//}
 
-		#endregion
+		//#endregion
 
 
 		#region BricksWithChad
@@ -178,13 +192,13 @@ namespace TaleLearnCode.TwitchCommander
 		{
 			_bricksWithChad = new("BricksWithChad", _appSettings, _azureStorageSettings, _tableNames, _bricksWithChadSettings, true);
 			_bricksWithChad.OnLoggedEvent += BricksWithChad_OnLoggedEvent;
-			_bricksWithChad.OnProjectUpdated += BricksWithChad_OnProjectUpdated;
+			//_bricksWithChad.OnProjectUpdated += BricksWithChad_OnProjectUpdated;
 		}
 
-		private void BricksWithChad_OnProjectUpdated(object sender, OnProjectUpdatedArgs e)
-		{
-			DisplayProjectInformation(e);
-		}
+		//private void BricksWithChad_OnProjectUpdated(object sender, OnProjectUpdatedArgs e)
+		//{
+		//	DisplayProjectInformation(e);
+		//}
 
 		private void BricksWithChad_OnLoggedEvent(object sender, OnLoggedEventArgs e)
 		{
@@ -194,7 +208,7 @@ namespace TaleLearnCode.TwitchCommander
 		private void ConnectedToBricksWithChad_ValueChanged(object sender, System.EventArgs e)
 		{
 			if (ConnectedToBricksWithChad.Value)
-				_bricksWithChad.Connect();
+				_bricksWithChad.Connect(FakeOnline.Checked);
 			else
 				_bricksWithChad.Disconnect();
 		}
@@ -207,13 +221,13 @@ namespace TaleLearnCode.TwitchCommander
 		{
 			_taleLearnCode = new("TaleLearnCode", _appSettings, _azureStorageSettings, _tableNames, _taleLearnCodeSettings, true);
 			_taleLearnCode.OnLoggedEvent += TaleLearnCode_OnLoggedEvent;
-			_taleLearnCode.OnProjectUpdated += TaleLearnCode_OnProjectUpdated;
+			//_taleLearnCode.OnProjectUpdated += TaleLearnCode_OnProjectUpdated;
 		}
 
-		private void TaleLearnCode_OnProjectUpdated(object sender, OnProjectUpdatedArgs e)
-		{
-			DisplayProjectInformation(e);
-		}
+		//private void TaleLearnCode_OnProjectUpdated(object sender, OnProjectUpdatedArgs e)
+		//{
+		//	DisplayProjectInformation(e);
+		//}
 
 		private void TaleLearnCode_OnLoggedEvent(object sender, OnLoggedEventArgs e)
 		{
@@ -223,7 +237,7 @@ namespace TaleLearnCode.TwitchCommander
 		private void ConnectedToTaleLearnCode_ValueChanged(object sender, System.EventArgs e)
 		{
 			if (ConnectedToTaleLearnCode.Value)
-				_taleLearnCode.Connect();
+				_taleLearnCode.Connect(FakeOnline.Checked);
 			else
 				_taleLearnCode.Disconnect();
 		}
@@ -244,25 +258,27 @@ namespace TaleLearnCode.TwitchCommander
 
 		}
 
-		private void SetProject_Click(object sender, EventArgs e)
-		{
-			if (ViewSelector.Items[ViewSelector.SelectedIndex].Text == _bricksWithChad.ChannelName)
-			{
-				_bricksWithChad.SetProject(ProjectName.Text);
-			}
-			else if (ViewSelector.Items[ViewSelector.SelectedIndex].Text == _taleLearnCode.ChannelName)
-			{
-				_taleLearnCode.SetProject(ProjectName.Text);
-			}
-		}
+		//private void SetProject_Click(object sender, EventArgs e)
+		//{
+		//	if (ViewSelector.Items[ViewSelector.SelectedIndex].Text == _bricksWithChad.ChannelName)
+		//	{
+		//		_bricksWithChad.SetProject(ProjectName.Text);
+		//	}
+		//	else if (ViewSelector.Items[ViewSelector.SelectedIndex].Text == _taleLearnCode.ChannelName)
+		//	{
+		//		_taleLearnCode.SetProject(ProjectName.Text);
+		//	}
+		//}
 
 		private void timer_Tick(object sender, EventArgs e)
 		{
 			if (ViewSelector.SelectedIndex > -1)
 				if (_bricksWithChad.ProjectTracking != null && ViewSelector.Items[ViewSelector.SelectedIndex].Text == _bricksWithChad.ChannelName)
-					DisplayProjectTime(_bricksWithChad.ProjectTracking.OverallElapsedTime);
+					//DisplayProjectTime(_bricksWithChad.ProjectTracking.OverallElapsedTime);
+					Metrics.UpdateProjectTimer(_bricksWithChad.ProjectTracking.OverallElapsedTime);
 				else if (_taleLearnCode.ProjectTracking != null && ViewSelector.Items[ViewSelector.SelectedIndex].Text == _taleLearnCode.ChannelName)
-					DisplayProjectTime(_taleLearnCode.ProjectTracking.OverallElapsedTime);
+					//DisplayProjectTime(_taleLearnCode.ProjectTracking.OverallElapsedTime);
+					Metrics.UpdateProjectTimer(_taleLearnCode.ProjectTracking.OverallElapsedTime);
 		}
 	}
 }
