@@ -30,6 +30,9 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 		private void InitializeComponent()
 		{
 			Telerik.WinControls.UI.CartesianArea cartesianArea1 = new Telerik.WinControls.UI.CartesianArea();
+			Telerik.WinControls.UI.CategoricalAxis categoricalAxis1 = new Telerik.WinControls.UI.CategoricalAxis();
+			Telerik.WinControls.UI.LinearAxis linearAxis1 = new Telerik.WinControls.UI.LinearAxis();
+			Telerik.WinControls.UI.AreaSeries areaSeries1 = new Telerik.WinControls.UI.AreaSeries();
 			this.StreamStatsGroup = new Telerik.WinControls.UI.RadGroupBox();
 			this.StreamTitle = new Telerik.WinControls.UI.RadLabel();
 			this.StreamTitleLabel = new Telerik.WinControls.UI.RadLabel();
@@ -244,8 +247,19 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 			// radChartView1
 			// 
 			this.radChartView1.AreaDesign = cartesianArea1;
+			categoricalAxis1.IsPrimary = true;
+			linearAxis1.AxisType = Telerik.Charting.AxisType.Second;
+			linearAxis1.IsPrimary = true;
+			linearAxis1.TickOrigin = null;
+			this.radChartView1.Axes.AddRange(new Telerik.WinControls.UI.Axis[] {
+            categoricalAxis1,
+            linearAxis1});
 			this.radChartView1.Location = new System.Drawing.Point(156, 21);
 			this.radChartView1.Name = "radChartView1";
+			areaSeries1.HorizontalAxis = categoricalAxis1;
+			areaSeries1.VerticalAxis = linearAxis1;
+			this.radChartView1.Series.AddRange(new Telerik.WinControls.UI.ChartSeries[] {
+            areaSeries1});
 			this.radChartView1.ShowGrid = false;
 			this.radChartView1.Size = new System.Drawing.Size(477, 234);
 			this.radChartView1.TabIndex = 0;
