@@ -244,7 +244,7 @@
 			this.AlertsGroup.Controls.Add(this.ShowFollowerAlert);
 			this.AlertsGroup.Enabled = false;
 			this.AlertsGroup.HeaderText = "Alerts";
-			this.AlertsGroup.Location = new System.Drawing.Point(1091, 489);
+			this.AlertsGroup.Location = new System.Drawing.Point(1195, 397);
 			this.AlertsGroup.Name = "AlertsGroup";
 			this.AlertsGroup.Size = new System.Drawing.Size(134, 253);
 			this.AlertsGroup.TabIndex = 28;
@@ -325,7 +325,7 @@
 			this.OBSStatsGroup.Controls.Add(this.OBSTotalStreamTimeLabel);
 			this.OBSStatsGroup.Enabled = false;
 			this.OBSStatsGroup.HeaderText = "OBS Stats";
-			this.OBSStatsGroup.Location = new System.Drawing.Point(754, 489);
+			this.OBSStatsGroup.Location = new System.Drawing.Point(1187, 193);
 			this.OBSStatsGroup.Name = "OBSStatsGroup";
 			this.OBSStatsGroup.Size = new System.Drawing.Size(331, 193);
 			this.OBSStatsGroup.TabIndex = 31;
@@ -461,7 +461,7 @@
 			this.OBSSettingsGroup.Controls.Add(this.OBSProfileLabel);
 			this.OBSSettingsGroup.Enabled = false;
 			this.OBSSettingsGroup.HeaderText = "OBS Settings";
-			this.OBSSettingsGroup.Location = new System.Drawing.Point(531, 489);
+			this.OBSSettingsGroup.Location = new System.Drawing.Point(12, 534);
 			this.OBSSettingsGroup.Name = "OBSSettingsGroup";
 			this.OBSSettingsGroup.Size = new System.Drawing.Size(216, 253);
 			this.OBSSettingsGroup.TabIndex = 32;
@@ -594,7 +594,7 @@
 			// 
 			this.StreamStats.Location = new System.Drawing.Point(520, 39);
 			this.StreamStats.Name = "StreamStats";
-			this.StreamStats.Size = new System.Drawing.Size(643, 338);
+			this.StreamStats.Size = new System.Drawing.Size(643, 671);
 			this.StreamStats.TabIndex = 36;
 			this.StreamStats.WOPR = null;
 			// 
@@ -603,7 +603,7 @@
 			this.AutoScaleBaseSize = new System.Drawing.Size(7, 15);
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1491, 796);
+			this.ClientSize = new System.Drawing.Size(1503, 784);
 			this.Controls.Add(this.StreamStats);
 			this.Controls.Add(this.ProjectInfo);
 			this.Controls.Add(this.FakeOnline);

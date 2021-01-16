@@ -16,12 +16,6 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 	public partial class StreamStats : UserControl
 	{
 
-		//BindingList<MetricCounts> myList;
-
-		LineSeries viewerLineSeries = new();
-		LineSeries subscriberLineSeries = new();
-		LineSeries followerLineSeries = new();
-
 		private WOPR _wopr = null;
 		private string _gameId;
 
@@ -34,17 +28,7 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 				if (_wopr != null)
 				{
 					_wopr.OnStreamUpdate += WOPR_OnStreamUpdate;
-					//_wopr.OnStreamMetricsUpdated += WOPR_OnStreamMetricsUpdated;
 				}
-			}
-		}
-
-		public async Task RefreshStats()
-		{
-			if (_wopr != null)
-			{
-				//DisplaySubscribersCount(await _wopr.GetSubscriberCountAsync());
-				//DisplayFollowersCount(await _wopr.GetFollowerCountAsync());
 			}
 		}
 
@@ -69,43 +53,7 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 			DisplaySubscribersCount(subscribers);
 			DisplayFollowersCount(followers);
 
-			////myList = new BindingList<MetricCounts>();
-			////myList.Add(new MetricCounts(e.Stream.ViewerCount, "Viewers"));
-			////myList.Add(new MetricCounts(subscribers, "Subscribers"));
-			////myList.Add(new MetricCounts(followers, "Followers"));
-			////BarSeries barSeria = new BarSeries();
-			////radChartView1.Series.Add(barSeria);
-			////barSeria.DataSource = myList;
-			////barSeria.ValueMember = "MyInt";
-			////barSeria.CategoryMember = "MyString";
-
-			////LineSeries lineSeries = new LineSeries();
-			////lineSeries.DataPoints.Add(new CategoricalDataPoint(20, "Jan"));
-			////lineSeries.DataPoints.Add(new CategoricalDataPoint(22, "Apr"));
-			////lineSeries.DataPoints.Add(new CategoricalDataPoint(12, "Jul"));
-			////lineSeries.DataPoints.Add(new CategoricalDataPoint(19, "Oct"));
-			////this.radChartView1.Series.Add(lineSeries);
-			////LineSeries lineSeries2 = new LineSeries();
-			////lineSeries2.DataPoints.Add(new CategoricalDataPoint(18, "Jan"));
-			////lineSeries2.DataPoints.Add(new CategoricalDataPoint(15, "Apr"));
-			////lineSeries2.DataPoints.Add(new CategoricalDataPoint(17, "Jul"));
-			////lineSeries2.DataPoints.Add(new CategoricalDataPoint(22, "Oct"));
-			////this.radChartView1.Series.Add(lineSeries2);
-
-
-			//followerLineSeries.DataPoints.Add(new CategoricalDataPoint(followers, DateTime.UtcNow));
-			//subscriberLineSeries.DataPoints.Add(new CategoricalDataPoint(subscribers, DateTime.UtcNow));
-			//viewerLineSeries.DataPoints.Add(new CategoricalDataPoint(e.Stream.ViewerCount, DateTime.UtcNow));
-
-			//radChartView1.Series.Clear();
-			//radChartView1.Series.Add(followerLineSeries);
-			//radChartView1.Series.Add(subscriberLineSeries);
-			//radChartView1.Series.Add(subscriberLineSeries);
-
-		}
-
-		public void Disable()
-		{
+			radChartView2.Series[0].DataPoints.Add(new CategoricalDataPoint(e.Stream.ViewerCount));
 
 		}
 
@@ -210,6 +158,12 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 		public StreamStats()
 		{
 			InitializeComponent();
+
+			FastLineSeries fastLineSeries = new FastLineSeries();
+			radChartView2.Series.Add(fastLineSeries);
+
 		}
+
 	}
+
 }

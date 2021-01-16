@@ -30,9 +30,6 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 		private void InitializeComponent()
 		{
 			Telerik.WinControls.UI.CartesianArea cartesianArea1 = new Telerik.WinControls.UI.CartesianArea();
-			Telerik.WinControls.UI.CategoricalAxis categoricalAxis1 = new Telerik.WinControls.UI.CategoricalAxis();
-			Telerik.WinControls.UI.LinearAxis linearAxis1 = new Telerik.WinControls.UI.LinearAxis();
-			Telerik.WinControls.UI.AreaSeries areaSeries1 = new Telerik.WinControls.UI.AreaSeries();
 			this.StreamStatsGroup = new Telerik.WinControls.UI.RadGroupBox();
 			this.StreamTitle = new Telerik.WinControls.UI.RadLabel();
 			this.StreamTitleLabel = new Telerik.WinControls.UI.RadLabel();
@@ -51,7 +48,7 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 			this.FollowersCountLabel = new Telerik.WinControls.UI.RadLabel();
 			this.ViewersCount = new Telerik.WinControls.UI.RadLabel();
 			this.ViewersCountLabel = new Telerik.WinControls.UI.RadLabel();
-			this.radChartView1 = new Telerik.WinControls.UI.RadChartView();
+			this.radChartView2 = new Telerik.WinControls.UI.RadChartView();
 			((System.ComponentModel.ISupportInitialize)(this.StreamStatsGroup)).BeginInit();
 			this.StreamStatsGroup.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.StreamTitle)).BeginInit();
@@ -71,7 +68,7 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 			((System.ComponentModel.ISupportInitialize)(this.FollowersCountLabel)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.ViewersCount)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.ViewersCountLabel)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.radChartView1)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.radChartView2)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// StreamStatsGroup
@@ -180,13 +177,13 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 			// radGroupBox1
 			// 
 			this.radGroupBox1.AccessibleRole = System.Windows.Forms.AccessibleRole.Grouping;
+			this.radGroupBox1.Controls.Add(this.radChartView2);
 			this.radGroupBox1.Controls.Add(this.SubscribersCount);
 			this.radGroupBox1.Controls.Add(this.SubscribersCountLabel);
 			this.radGroupBox1.Controls.Add(this.FollowersCount);
 			this.radGroupBox1.Controls.Add(this.FollowersCountLabel);
 			this.radGroupBox1.Controls.Add(this.ViewersCount);
 			this.radGroupBox1.Controls.Add(this.ViewersCountLabel);
-			this.radGroupBox1.Controls.Add(this.radChartView1);
 			this.radGroupBox1.HeaderText = "";
 			this.radGroupBox1.Location = new System.Drawing.Point(0, 117);
 			this.radGroupBox1.Name = "radGroupBox1";
@@ -244,25 +241,14 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 			this.ViewersCountLabel.TabIndex = 1;
 			this.ViewersCountLabel.Text = "Viewers";
 			// 
-			// radChartView1
+			// radChartView2
 			// 
-			this.radChartView1.AreaDesign = cartesianArea1;
-			categoricalAxis1.IsPrimary = true;
-			linearAxis1.AxisType = Telerik.Charting.AxisType.Second;
-			linearAxis1.IsPrimary = true;
-			linearAxis1.TickOrigin = null;
-			this.radChartView1.Axes.AddRange(new Telerik.WinControls.UI.Axis[] {
-            categoricalAxis1,
-            linearAxis1});
-			this.radChartView1.Location = new System.Drawing.Point(156, 21);
-			this.radChartView1.Name = "radChartView1";
-			areaSeries1.HorizontalAxis = categoricalAxis1;
-			areaSeries1.VerticalAxis = linearAxis1;
-			this.radChartView1.Series.AddRange(new Telerik.WinControls.UI.ChartSeries[] {
-            areaSeries1});
-			this.radChartView1.ShowGrid = false;
-			this.radChartView1.Size = new System.Drawing.Size(477, 234);
-			this.radChartView1.TabIndex = 0;
+			this.radChartView2.AreaDesign = cartesianArea1;
+			this.radChartView2.Location = new System.Drawing.Point(149, 9);
+			this.radChartView2.Name = "radChartView2";
+			this.radChartView2.ShowGrid = false;
+			this.radChartView2.Size = new System.Drawing.Size(489, 250);
+			this.radChartView2.TabIndex = 11;
 			// 
 			// StreamStats
 			// 
@@ -271,7 +257,7 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 			this.Controls.Add(this.radGroupBox1);
 			this.Controls.Add(this.StreamStatsGroup);
 			this.Name = "StreamStats";
-			this.Size = new System.Drawing.Size(643, 384);
+			this.Size = new System.Drawing.Size(643, 383);
 			((System.ComponentModel.ISupportInitialize)(this.StreamStatsGroup)).EndInit();
 			this.StreamStatsGroup.ResumeLayout(false);
 			this.StreamStatsGroup.PerformLayout();
@@ -293,7 +279,7 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 			((System.ComponentModel.ISupportInitialize)(this.FollowersCountLabel)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.ViewersCount)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.ViewersCountLabel)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.radChartView1)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.radChartView2)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -312,12 +298,12 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 		private Telerik.WinControls.UI.RadLabel StreamId;
 		private Telerik.WinControls.UI.RadLabel StreamIdLabel;
 		private Telerik.WinControls.UI.RadGroupBox radGroupBox1;
-		private Telerik.WinControls.UI.RadChartView radChartView1;
 		private Telerik.WinControls.UI.RadLabel SubscribersCount;
 		private Telerik.WinControls.UI.RadLabel SubscribersCountLabel;
 		private Telerik.WinControls.UI.RadLabel FollowersCount;
 		private Telerik.WinControls.UI.RadLabel FollowersCountLabel;
 		private Telerik.WinControls.UI.RadLabel ViewersCount;
 		private Telerik.WinControls.UI.RadLabel ViewersCountLabel;
+		private Telerik.WinControls.UI.RadChartView radChartView2;
 	}
 }

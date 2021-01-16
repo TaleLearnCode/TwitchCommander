@@ -70,7 +70,6 @@ namespace TaleLearnCode.TwitchCommander
 
 				StreamStats.Enabled = true;
 				StreamStats.WOPR = wopr;
-				await StreamStats.RefreshStats();
 
 				ActivityFeedLabel.Enabled = true;
 				ActivityFeed.Enabled = true;
