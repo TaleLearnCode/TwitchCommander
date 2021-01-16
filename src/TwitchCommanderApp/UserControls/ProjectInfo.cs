@@ -41,7 +41,6 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 			if (OofCount.Visible) DisplayOofCount(e.Oofs, e.OverallOofs);
 		}
 
-
 		private void SetProject_Click(object sender, EventArgs e)
 		{
 			if (WOPR != null)
@@ -93,10 +92,6 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 			InitializeComponent();
 		}
 
-		//private void SetProject_Click(object sender, EventArgs e)
-		//{
-
-		//}
 	}
 
 }

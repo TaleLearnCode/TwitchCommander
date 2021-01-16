@@ -32,6 +32,14 @@
 		public string ChannelName { get; set; }
 
 		/// <summary>
+		/// Gets or sets the channel identifier.
+		/// </summary>
+		/// <value>
+		/// A <c>string</c> representing the Twitch identifier for the channel.
+		/// </value>
+		public string ChannelId { get; set; }
+
+		/// <summary>
 		/// Gets or sets the name of the bot to work on behalf of the channel.
 		/// </summary>
 		/// <value>

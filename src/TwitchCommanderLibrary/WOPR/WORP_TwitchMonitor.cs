@@ -17,8 +17,15 @@ namespace TaleLearnCode.TwitchCommander
 		/// <param name="e">The <see cref="OnStreamUpdateArgs"/> instance containing the event data.</param>
 		private void TwitchMonitor_OnStreamUpdate(object sender, OnStreamUpdateArgs e)
 		{
-			Console.WriteLine($"User Id: {e.Stream.UserId}");
+			InvokeOnStreamUpdate(e);
 		}
+
+		private void InvokeOnStreamUpdate(OnStreamUpdateArgs onStreamUpdateArgs)
+		{
+			OnStreamUpdate?.Invoke(this, onStreamUpdateArgs);
+		}
+
+		public EventHandler<OnStreamUpdateArgs> OnStreamUpdate;
 
 		/// <summary>
 		/// Handles the <see cref="TwitchLib.Api.Services.LiveStreamMonitorService.OnStreamOnline"/> event.

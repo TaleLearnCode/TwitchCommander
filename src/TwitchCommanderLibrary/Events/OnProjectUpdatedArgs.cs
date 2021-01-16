@@ -29,7 +29,7 @@ namespace TaleLearnCode.TwitchCommander.Events
 			DroppedBricks = projectTracking.DroppedBricks;
 			OverallDroppedBricks = projectTracking.OverallDroppedBricks;
 			Oofs = projectTracking.Oofs;
-			OverallOofs = projectTracking.Oofs;
+			OverallOofs = projectTracking.OverallOofs;
 		}
 
 	}

@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TaleLearnCode.TwitchCommander.Models;
 using TwitchLib.Api;
+using TwitchLib.Api.Helix.Models.Games;
 using TwitchLib.Api.Services;
+using TwitchLib.Api.V5.Models.Channels;
 using TwitchLib.Client;
 using TwitchLib.Client.Models;
 
@@ -119,6 +123,34 @@ namespace TaleLearnCode.TwitchCommander
 		{
 			_twitchClient.SendMessage(_twitchSettings.ChannelName, message);
 		}
+
+		public async Task<int> GetSubscriberCountAsync()
+		{
+			ChannelSubscribers channelSubscribers = await _twitchAPI.V5.Channels.GetChannelSubscribersAsync(_twitchSettings.ChannelId);
+			return channelSubscribers.Total;
+		}
+
+		public async Task<int> GetFollowerCountAsync()
+		{
+			ChannelFollowers channelFollowers = await _twitchAPI.V5.Channels.GetChannelFollowersAsync(_twitchSettings.ChannelId);
+			return channelFollowers.Total;
+		}
+
+		public async Task<string> GetGameNameAsync()
+		{
+			GetGamesResponse getGamesResponse = await _twitchAPI.Helix.Games.GetGamesAsync(new List<string>() { _stream.GameId });
+			if (getGamesResponse.Games.Any())
+			{
+				string gameName =  getGamesResponse.Games[0].Name;
+				gameName = gameName.Replace("&", "&&");
+				return gameName;
+			}
+			else
+			{
+				return string.Empty;
+			}
+		}
+
 
 	}
 

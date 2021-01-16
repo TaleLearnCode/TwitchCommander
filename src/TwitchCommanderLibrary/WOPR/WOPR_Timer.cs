@@ -23,20 +23,19 @@ namespace TaleLearnCode.TwitchCommander
 		{
 			_timer = new Timer(1000);
 			_timer.Elapsed += OnBotTimerElapsed;
+
 			_timer.AutoReset = true;
 			_timer.Enabled = true;
 		}
 
-		private void OnBotTimerElapsed(object sender, ElapsedEventArgs e)
+		private async void OnBotTimerElapsed(object sender, ElapsedEventArgs e)
 		{
 
 			TimeSpan intervalTime = new(0, 0, (int)(_timer.Interval / 1000));
 
 			_botRuntime = _botRuntime.Add(intervalTime);
 
-			// HACK: Removing _IsOnline check to test while not streaming
 			if ((_IsOnline || _fakeOnline) && ProjectTracking != null)
-			//if (_projectTracking != null)
 			{
 				ProjectTracking.ElaspedSeconds++;
 				ProjectTracking.OverallElapsedTime = ProjectTracking.OverallElapsedTime.Add(intervalTime);
@@ -59,6 +58,11 @@ namespace TaleLearnCode.TwitchCommander
 						BotTimerEntity.BotTimerExecuted(botTimer, _azureStorageSettings, _tableNames);
 					}
 				}
+			}
+
+			if (_botRuntime.TotalSeconds % 300 == 0)
+			{
+				InvokeOnStreamMetricsUpdated(await GetSubscriberCountAsync(), await GetFollowerCountAsync());
 			}
 
 			if (_botRuntime.TotalSeconds % (_appSettings.ProjectReminderInterval * 60) == 0) EnsureProjectIsSet();
@@ -84,6 +88,19 @@ namespace TaleLearnCode.TwitchCommander
 		{
 			if (e.ChatMessage.Username.ToLower() != _twitchSettings.ChannelName.ToLower())
 				_receivedChatMessages.Add(new ReceivedChatMessage(e.ChatMessage));
+		}
+
+		public EventHandler<OnStreamMetricsUpdatedArgs> OnStreamMetricsUpdated;
+
+		public void InvokeOnStreamMetricsUpdated(int subscribers, int followers)
+		{
+			OnStreamMetricsUpdated?.Invoke(
+				this,
+				new OnStreamMetricsUpdatedArgs()
+				{
+					Subscribers = subscribers,
+					Followers = followers
+				});
 		}
 
 	}

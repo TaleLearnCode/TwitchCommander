@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
-using System.Globalization;
 using System.IO;
 using TaleLearnCode.TwitchCommander.Events;
 using TaleLearnCode.TwitchCommander.Models;
@@ -55,7 +54,7 @@ namespace TaleLearnCode.TwitchCommander
 			ViewSelector.Items.Add(_taleLearnCode.ChannelName);
 		}
 
-		private void ViewSelector_SelectedIndexChanged(object sender, Telerik.WinControls.UI.Data.PositionChangedEventArgs e)
+		private async void ViewSelector_SelectedIndexChanged(object sender, Telerik.WinControls.UI.Data.PositionChangedEventArgs e)
 		{
 			if (ViewSelector.SelectedIndex > -1)
 			{
@@ -66,15 +65,19 @@ namespace TaleLearnCode.TwitchCommander
 				else if (ViewSelector.Items[ViewSelector.SelectedIndex].Text == _taleLearnCode.ChannelName)
 					wopr = _taleLearnCode;
 
-				ActivityFeedLabel.Enabled = true;
-				ActivityFeed.Enabled = true;
-
 				ProjectInfo.Enabled = true;
 				ProjectInfo.WOPR = wopr;
 
+				StreamStats.Enabled = true;
+				StreamStats.WOPR = wopr;
+				await StreamStats.RefreshStats();
+
+				ActivityFeedLabel.Enabled = true;
+				ActivityFeed.Enabled = true;
+
+
 				AlertsGroup.Enabled = true;
 				OBSSettingsGroup.Enabled = true;
-				StreamStatsGroup.Enabled = true;
 				OBSStatsGroup.Enabled = true;
 			}
 		}
@@ -174,5 +177,6 @@ namespace TaleLearnCode.TwitchCommander
 					ProjectInfo.UpdateProjectTimer(_taleLearnCode.ProjectTracking.OverallElapsedTime);
 				}
 		}
+
 	}
 }

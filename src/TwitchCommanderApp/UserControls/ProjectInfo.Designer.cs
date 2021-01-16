@@ -64,12 +64,12 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 			this.MetricsGroup.Controls.Add(this.ProjectTimerLabel);
 			this.MetricsGroup.Controls.Add(this.ProjectTime);
 			this.MetricsGroup.Controls.Add(this.DroppedBrickCountLabel);
-			this.MetricsGroup.HeaderText = "Metrics";
+			this.MetricsGroup.HeaderText = "Project Info";
 			this.MetricsGroup.Location = new System.Drawing.Point(0, 0);
 			this.MetricsGroup.Name = "MetricsGroup";
 			this.MetricsGroup.Size = new System.Drawing.Size(207, 147);
 			this.MetricsGroup.TabIndex = 29;
-			this.MetricsGroup.Text = "Metrics";
+			this.MetricsGroup.Text = "Project Info";
 			// 
 			// ProjectNameLabel
 			// 
