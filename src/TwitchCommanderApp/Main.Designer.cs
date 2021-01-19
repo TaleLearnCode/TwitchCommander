@@ -444,10 +444,10 @@
 			// 
 			// OBSStatus
 			// 
-			this.OBSStatus.Location = new System.Drawing.Point(532, 450);
+			this.OBSStatus.Location = new System.Drawing.Point(520, 429);
 			this.OBSStatus.Name = "OBSStatus";
 			this.OBSStatus.OBSControler = null;
-			this.OBSStatus.Size = new System.Drawing.Size(502, 368);
+			this.OBSStatus.Size = new System.Drawing.Size(614, 137);
 			this.OBSStatus.TabIndex = 38;
 			// 
 			// Main
@@ -455,7 +455,7 @@
 			this.AutoScaleBaseSize = new System.Drawing.Size(7, 15);
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1539, 748);
+			this.ClientSize = new System.Drawing.Size(1551, 736);
 			this.Controls.Add(this.OBSStatus);
 			this.Controls.Add(this.button1);
 			this.Controls.Add(this.StreamStats);
