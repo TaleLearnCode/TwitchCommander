@@ -39,6 +39,10 @@
 		/// </value>
 		public int StreamMonitorCheckInterval { get; set; }
 
+		public string OBSPassword { get; set; }
+
+		public string OBSURL { get; set; }
+
 	}
 
 }

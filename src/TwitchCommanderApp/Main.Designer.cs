@@ -81,6 +81,7 @@
 			this.FakeOnline = new Telerik.WinControls.UI.RadCheckBox();
 			this.ProjectInfo = new TaleLearnCode.TwitchCommander.UserControls.ProjectInfo();
 			this.StreamStats = new TaleLearnCode.TwitchCommander.UserControls.StreamStats();
+			this.button1 = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.ViewSelector)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.TwitchClientLog)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.radLabel1)).BeginInit();
@@ -598,12 +599,23 @@
 			this.StreamStats.TabIndex = 36;
 			this.StreamStats.WOPR = null;
 			// 
+			// button1
+			// 
+			this.button1.Location = new System.Drawing.Point(282, 534);
+			this.button1.Name = "button1";
+			this.button1.Size = new System.Drawing.Size(75, 23);
+			this.button1.TabIndex = 37;
+			this.button1.Text = "button1";
+			this.button1.UseVisualStyleBackColor = true;
+			this.button1.Click += new System.EventHandler(this.button1_Click);
+			// 
 			// Main
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(7, 15);
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1503, 784);
+			this.ClientSize = new System.Drawing.Size(1515, 772);
+			this.Controls.Add(this.button1);
 			this.Controls.Add(this.StreamStats);
 			this.Controls.Add(this.ProjectInfo);
 			this.Controls.Add(this.FakeOnline);
@@ -750,5 +762,6 @@
 		private UserControls.ProjectInfo ProjectInfo;
 		private UserControls.StreamStats St;
 		private UserControls.StreamStats StreamStats;
+		private System.Windows.Forms.Button button1;
 	}
 }

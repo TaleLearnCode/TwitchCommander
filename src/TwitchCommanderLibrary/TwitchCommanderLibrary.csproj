@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Data.Tables" Version="3.0.0-beta.4" />
+    <PackageReference Include="Azure.Data.Tables" Version="3.0.0-beta.5" />
+    <PackageReference Include="obs-websocket-dotnet" Version="4.8.1" />
     <PackageReference Include="TwitchLib" Version="3.1.1" />
   </ItemGroup>
 

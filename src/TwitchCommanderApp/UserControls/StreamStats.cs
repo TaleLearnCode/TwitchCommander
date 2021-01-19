@@ -1,8 +1,6 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TaleLearnCode.TwitchCommander.Events;
 using TaleLearnCode.TwitchCommander.Extensions;
@@ -40,20 +38,31 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 
 		private async void WOPR_OnStreamUpdate(object sender, OnStreamUpdateArgs e)
 		{
+			try
+			{
 
-			int subscribers = await _wopr.GetSubscriberCountAsync();
-			int followers = await _wopr.GetFollowerCountAsync();
-		
-			DisplayStreamId(e.Stream.Id);
-			DisplayGameId(e.Stream.GameId);
-			DisplayStreamType(e.Stream.Type);
-			DisplayStreamTitle(e.Stream.Title);
-			DisplayViewerCount(e.Stream.ViewerCount);
-			DisplayStartedAt(e.Stream.StartedAt);
-			DisplaySubscribersCount(subscribers);
-			DisplayFollowersCount(followers);
+				int subscribers = await _wopr.GetSubscriberCountAsync();
+				int followers = await _wopr.GetFollowerCountAsync();
 
-			radChartView2.Series[0].DataPoints.Add(new CategoricalDataPoint(e.Stream.ViewerCount));
+				DisplayStreamId(e.Stream.Id);
+				DisplayGameId(e.Stream.GameId);
+				DisplayStreamType(e.Stream.Type);
+				DisplayStreamTitle(e.Stream.Title);
+				DisplayViewerCount(e.Stream.ViewerCount);
+				DisplayStartedAt(e.Stream.StartedAt);
+				DisplaySubscribersCount(subscribers);
+				DisplayFollowersCount(followers);
+
+				radChartView2.Series[0].DataPoints.Add(new CategoricalDataPoint(e.Stream.ViewerCount));
+
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				// TODO: Do something with this exception -- see if radChatView2 is crashing when displaying alerts
+			}
+
+
 
 		}
 

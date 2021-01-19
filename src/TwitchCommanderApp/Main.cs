@@ -13,6 +13,8 @@ namespace TaleLearnCode.TwitchCommander
 		WOPR _bricksWithChad;
 		WOPR _taleLearnCode;
 
+		OBSController _obsController = new();
+
 		private IConfigurationRoot _config;
 		private readonly AppSettings _appSettings = new();
 		private readonly AzureStorageSettings _azureStorageSettings = new();
@@ -177,5 +179,11 @@ namespace TaleLearnCode.TwitchCommander
 				}
 		}
 
+		private void button1_Click(object sender, EventArgs e)
+		{
+			_obsController.Connect(_appSettings.OBSURL, _appSettings.OBSPassword);
+			//_obsController.TestMe();
+			_obsController.ShowSceneItem("SocketsTest", "Media Source: SocketsTest", 16);
+		}
 	}
 }
