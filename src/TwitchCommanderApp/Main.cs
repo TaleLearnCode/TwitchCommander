@@ -54,6 +54,8 @@ namespace TaleLearnCode.TwitchCommander
 		{
 			ViewSelector.Items.Add(_bricksWithChad.ChannelName);
 			ViewSelector.Items.Add(_taleLearnCode.ChannelName);
+			// HACK: Need to control this via the form
+			_obsController.Connect(_appSettings.OBSURL, _appSettings.OBSPassword);
 		}
 
 		private async void ViewSelector_SelectedIndexChanged(object sender, Telerik.WinControls.UI.Data.PositionChangedEventArgs e)
@@ -73,13 +75,15 @@ namespace TaleLearnCode.TwitchCommander
 				StreamStats.Enabled = true;
 				StreamStats.WOPR = wopr;
 
+				OBSStatus.Enabled = true;
+				OBSStatus.OBSControler = _obsController;
+
 				ActivityFeedLabel.Enabled = true;
 				ActivityFeed.Enabled = true;
 
 
 				AlertsGroup.Enabled = true;
 				OBSSettingsGroup.Enabled = true;
-				OBSStatsGroup.Enabled = true;
 			}
 		}
 

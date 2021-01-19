@@ -1,5 +1,6 @@
 ﻿using OBSWebsocketDotNet;
 using OBSWebsocketDotNet.Types;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,7 +13,13 @@ namespace TaleLearnCode.TwitchCommander
 	public class OBSController
 	{
 
-		private OBSWebsocket _obs = new();
+		private OBSWebsocket _obs;
+
+		public OBSController()
+		{
+			_obs = new();
+			_obs.StreamStatus += OBS_StreamStatus;
+		}
 
 		/// <summary>
 		/// Connects to the specifed OBS instance.
@@ -85,6 +92,15 @@ namespace TaleLearnCode.TwitchCommander
 				Visible = visible
 			};
 		}
+
+		public EventHandler<StreamStatus> OnOBSStatusChange;
+
+		private void OBS_StreamStatus(OBSWebsocket sender, StreamStatus status)
+		{
+			OnOBSStatusChange?.Invoke(this, status);
+		}
+
+
 
 	}
 
