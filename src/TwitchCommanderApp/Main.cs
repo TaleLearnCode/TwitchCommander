@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using TaleLearnCode.TwitchCommander.Events;
 using TaleLearnCode.TwitchCommander.Models;
@@ -21,6 +22,7 @@ namespace TaleLearnCode.TwitchCommander
 		private readonly TableNames _tableNames = new();
 		private readonly TwitchSettings _bricksWithChadSettings = new();
 		private readonly TwitchSettings _taleLearnCodeSettings = new();
+		private readonly List<AlertSetting> _alertSettings = new();
 
 		public Main()
 		{
@@ -40,7 +42,8 @@ namespace TaleLearnCode.TwitchCommander
 				.AddJsonFile("AzureStorage.json", optional: false, reloadOnChange: true)
 				.AddJsonFile("BricksWithChad.json", optional: false, reloadOnChange: true)
 				.AddJsonFile("TableNames.json", optional: false, reloadOnChange: true)
-				.AddJsonFile("TaleLearnCode.json", optional: false, reloadOnChange: true);
+				.AddJsonFile("TaleLearnCode.json", optional: false, reloadOnChange: true)
+				.AddJsonFile("AlertSettings.json", optional: false, reloadOnChange: true);
 			_config = builder.Build();
 
 			_config.GetSection("AppSettings").Bind(_appSettings);
@@ -48,6 +51,7 @@ namespace TaleLearnCode.TwitchCommander
 			_config.GetSection("TableNames").Bind(_tableNames);
 			_config.GetSection("BricksWithChad").Bind(_bricksWithChadSettings);
 			_config.GetSection("TaleLearnCode").Bind(_taleLearnCodeSettings);
+			_config.GetSection("AlertSettings").Bind(_alertSettings);
 		}
 
 		private void FormSetup()

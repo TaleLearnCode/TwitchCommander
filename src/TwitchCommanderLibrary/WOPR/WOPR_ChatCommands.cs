@@ -20,9 +20,19 @@ namespace TaleLearnCode.TwitchCommander
 		private void TwitchClient_OnChatCommandReceived(object sender, OnChatCommandReceivedArgs e)
 		{
 
-			if (e.Command.CommandText.ToLower() == "project")
+			string commandText = e.Command.CommandText.ToLower();
+
+			if (commandText == "project")
 			{
 				HandleProjectCommand(e.Command);
+			}
+			else if (commandText == "brickdrop" || commandText == "dropbrick")
+			{
+				HandleBrickDropCommand(e.Command);
+			}
+			else if (commandText == "oof")
+			{
+				HandleOofCommand(e.Command);
 			}
 			else
 			{

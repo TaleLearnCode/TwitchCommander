@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TaleLearnCode.TwitchCommander.Models;
@@ -7,6 +8,7 @@ using TwitchLib.Api.Helix.Models.Games;
 using TwitchLib.Api.Services;
 using TwitchLib.Api.V5.Models.Channels;
 using TwitchLib.Client;
+using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
 
 namespace TaleLearnCode.TwitchCommander
@@ -81,14 +83,29 @@ namespace TaleLearnCode.TwitchCommander
 			_twitchClient.OnDisconnected += TwitchClient_OnDisconnected;
 			_twitchClient.OnChatCommandReceived += TwitchClient_OnChatCommandReceived;
 			_twitchClient.OnNewSubscriber += TwitchClient_OnNewSubscriber;
-			_twitchClient.OnCommunitySubscription += TwitchClient_OnCommunitySubscription;
 			_twitchClient.OnGiftedSubscription += TwitchClient_OnGiftedSubscription;
 			_twitchClient.OnReSubscriber += TwitchClient_OnResubscriber;
 			_twitchClient.OnMessageReceived += TwitchClient_OnMessageReceived;
+			_twitchClient.OnRaidNotification += TwitchClient_OnRaidNotification;
+			_twitchClient.OnBeingHosted += TwitchClient_OnBeingHosted;
 
 			_credentials = new ConnectionCredentials(_twitchSettings.BotName, _twitchSettings.AccessToken);
 			_twitchClient.Initialize(_credentials, _twitchSettings.ChannelName);
 		}
+
+		private void TwitchClient_OnBeingHosted(object sender, OnBeingHostedArgs e)
+		{
+			OnBeingHosted?.Invoke(this, e);
+		}
+
+		public EventHandler<OnBeingHostedArgs> OnBeingHosted;
+
+		private void TwitchClient_OnRaidNotification(object sender, OnRaidNotificationArgs e)
+		{
+			OnRaidNotification?.Invoke(this, e);
+		}
+
+		public EventHandler<OnRaidNotificationArgs> OnRaidNotification;
 
 		/// <summary>
 		/// Configures the <see cref="TwitchAPI"/> instance.
@@ -141,7 +158,7 @@ namespace TaleLearnCode.TwitchCommander
 			GetGamesResponse getGamesResponse = await _twitchAPI.Helix.Games.GetGamesAsync(new List<string>() { _stream.GameId });
 			if (getGamesResponse.Games.Any())
 			{
-				string gameName =  getGamesResponse.Games[0].Name;
+				string gameName = getGamesResponse.Games[0].Name;
 				gameName = gameName.Replace("&", "&&");
 				return gameName;
 			}

@@ -47,6 +47,9 @@
   
 
   <ItemGroup>
+    <None Update="Settings\AlertSettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Settings\AppSettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
