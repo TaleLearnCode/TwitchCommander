@@ -1,6 +1,8 @@
 ﻿using OBSWebsocketDotNet;
 using OBSWebsocketDotNet.Types;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,11 +16,24 @@ namespace TaleLearnCode.TwitchCommander
 	{
 
 		private OBSWebsocket _obs;
+		private Dictionary<string, TextGDIPlusProperties> _textProperties = new();
 
 		public OBSController()
 		{
 			_obs = new();
 			_obs.StreamStatus += OBS_StreamStatus;
+			_obs.Connected += OBS_Connected;
+		}
+
+		public EventHandler<EventArgs> OnConnected;
+
+		private void OBS_Connected(object sender, EventArgs e)
+		{
+			List<SourceInfo> sources = _obs.GetSourcesList();
+			foreach (SourceInfo source in sources)
+				if (source.TypeID == "text_gdiplus_v2")
+					_textProperties.Add(source.Name, _obs.GetTextGDIPlusProperties(source.Name));
+			OnConnected?.Invoke(this, e);
 		}
 
 		/// <summary>
@@ -39,6 +54,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// </summary>
 		public void Disconnect()
 		{
+			_textProperties = new();
 			if (_obs.IsConnected)
 				_obs.Disconnect();
 		}
@@ -51,23 +67,28 @@ namespace TaleLearnCode.TwitchCommander
 		/// </value>
 		public bool IsConnected => _obs.IsConnected;
 
+		public bool DoesCurrentSceneContainSource(string sourceName)
+		{
+			OBSScene scene = _obs.GetCurrentScene();
+			return scene.Items.Any(x => x.SourceName == sourceName);
+		}
+
 		/// <summary>
 		/// Shows the specified scene item.
 		/// </summary>
 		/// <param name="sceneName">Name of the scene where the item to show is.</param>
 		/// <param name="itemName">Name of the scene item to be displayed.</param>
 		/// <param name="duration">If greater than 0, the number of seconds to display the scene item.</param>
-		public void ShowSceneItem(string sceneName, string itemName, int duration = 0)
+		public void ShowSceneItem(string itemName, int duration = 0, string sceneName = null)
 		{
 			_obs.SetSceneItemProperties(GetSceneItemProperties(itemName, true), sceneName);
-
 			if (duration > 0)
 			{
 				using CancellationTokenSource source = new();
 				var t = Task.Run(async delegate
 				{
 					await Task.Delay(duration * 1000, source.Token);
-					HideSceneItem(sceneName, itemName);
+					HideSceneItem(itemName, sceneName);
 				});
 				t.Wait();
 			}
@@ -78,7 +99,7 @@ namespace TaleLearnCode.TwitchCommander
 		/// </summary>
 		/// <param name="sceneName">Name of the scene where the item to hide is.</param>
 		/// <param name="itemName">Name of the scene item to be hidden.</param>
-		public void HideSceneItem(string sceneName, string itemName)
+		public void HideSceneItem(string itemName, string sceneName = null)
 		{
 			_obs.SetSceneItemProperties(GetSceneItemProperties(itemName, false), sceneName);
 		}
@@ -100,7 +121,15 @@ namespace TaleLearnCode.TwitchCommander
 			OnOBSStatusChange?.Invoke(this, status);
 		}
 
-
+		public void SetText(string sourceName, string value)
+		{
+			if (_textProperties.ContainsKey(sourceName))
+			{
+				TextGDIPlusProperties textProperites = _textProperties[sourceName];
+				textProperites.Text = value;
+				_obs.SetTextGDIPlusProperties(textProperites);
+			}
+		}
 
 	}
 

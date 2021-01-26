@@ -66,7 +66,6 @@
 			this.FakeOnline = new Telerik.WinControls.UI.RadCheckBox();
 			this.ProjectInfo = new TaleLearnCode.TwitchCommander.UserControls.ProjectInfo();
 			this.StreamStats = new TaleLearnCode.TwitchCommander.UserControls.StreamStats();
-			this.button1 = new System.Windows.Forms.Button();
 			this.OBSStatus = new TaleLearnCode.TwitchCommander.UserControls.OBS();
 			((System.ComponentModel.ISupportInitialize)(this.ViewSelector)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.TwitchClientLog)).BeginInit();
@@ -417,9 +416,12 @@
 			// 
 			// ProjectInfo
 			// 
+			this.ProjectInfo.BrickDropAlert = null;
 			this.ProjectInfo.Enabled = false;
 			this.ProjectInfo.Location = new System.Drawing.Point(1169, 39);
 			this.ProjectInfo.Name = "ProjectInfo";
+			this.ProjectInfo.OBSController = null;
+			this.ProjectInfo.OofAlert = null;
 			this.ProjectInfo.Size = new System.Drawing.Size(207, 148);
 			this.ProjectInfo.TabIndex = 35;
 			this.ProjectInfo.WOPR = null;
@@ -428,19 +430,10 @@
 			// 
 			this.StreamStats.Location = new System.Drawing.Point(520, 39);
 			this.StreamStats.Name = "StreamStats";
+			this.StreamStats.OBSController = null;
 			this.StreamStats.Size = new System.Drawing.Size(643, 384);
 			this.StreamStats.TabIndex = 36;
 			this.StreamStats.WOPR = null;
-			// 
-			// button1
-			// 
-			this.button1.Location = new System.Drawing.Point(282, 534);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(75, 23);
-			this.button1.TabIndex = 37;
-			this.button1.Text = "button1";
-			this.button1.UseVisualStyleBackColor = true;
-			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
 			// OBSStatus
 			// 
@@ -455,9 +448,8 @@
 			this.AutoScaleBaseSize = new System.Drawing.Size(7, 15);
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1551, 736);
+			this.ClientSize = new System.Drawing.Size(1575, 712);
 			this.Controls.Add(this.OBSStatus);
-			this.Controls.Add(this.button1);
 			this.Controls.Add(this.StreamStats);
 			this.Controls.Add(this.ProjectInfo);
 			this.Controls.Add(this.FakeOnline);
@@ -571,7 +563,6 @@
 		private UserControls.ProjectInfo ProjectInfo;
 		private UserControls.StreamStats St;
 		private UserControls.StreamStats StreamStats;
-		private System.Windows.Forms.Button button1;
 		private UserControls.OBS OBSStatus;
 	}
 }

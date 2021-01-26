@@ -49,7 +49,7 @@ namespace TaleLearnCode.TwitchCommander
 					int bricksDropped = 1;
 					if (chatCommand.ArgumentsAsList.Any()) int.TryParse(chatCommand.ArgumentsAsString, out bricksDropped);
 					ProjectTracking.DroppedBricks += bricksDropped;
-					ProjectTracking.OverallDroppedBricks++;
+					ProjectTracking.OverallDroppedBricks += bricksDropped;
 					ProjectTrackingEntity.Save(_azureStorageSettings, _tableNames, ProjectTracking);
 					SendMessage($"{_twitchSettings.ChannelName} just dropped {bricksDropped} bricks.  That's {ProjectTracking.DroppedBricks} so far this stream and {ProjectTracking.OverallDroppedBricks} while working on the {ProjectTracking.ProjectName} project.");
 					OnBrickDropped?.Invoke(this, new OnBrickDropArgs(ProjectTracking.DroppedBricks, ProjectTracking.OverallDroppedBricks));

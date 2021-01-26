@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TaleLearnCode.TwitchCommander.Events;
 using TaleLearnCode.TwitchCommander.Models;
 using Telerik.WinControls.UI;
@@ -22,7 +23,7 @@ namespace TaleLearnCode.TwitchCommander
 		private readonly TableNames _tableNames = new();
 		private readonly TwitchSettings _bricksWithChadSettings = new();
 		private readonly TwitchSettings _taleLearnCodeSettings = new();
-		private readonly List<AlertSetting> _alertSettings = new();
+		private Dictionary<string, AlertSetting> _alertSettings = new();
 
 		public Main()
 		{
@@ -51,7 +52,11 @@ namespace TaleLearnCode.TwitchCommander
 			_config.GetSection("TableNames").Bind(_tableNames);
 			_config.GetSection("BricksWithChad").Bind(_bricksWithChadSettings);
 			_config.GetSection("TaleLearnCode").Bind(_taleLearnCodeSettings);
-			_config.GetSection("AlertSettings").Bind(_alertSettings);
+
+			List<AlertSetting> alertSettings = new();
+			_config.GetSection("AlertSettings").Bind(alertSettings);
+			_alertSettings = alertSettings.ToDictionary(x => x.AlertName);
+
 		}
 
 		private void FormSetup()
@@ -59,7 +64,13 @@ namespace TaleLearnCode.TwitchCommander
 			ViewSelector.Items.Add(_bricksWithChad.ChannelName);
 			ViewSelector.Items.Add(_taleLearnCode.ChannelName);
 			// HACK: Need to control this via the form
+			_obsController.OnConnected += OBSController_OnConnected;
 			_obsController.Connect(_appSettings.OBSURL, _appSettings.OBSPassword);
+		}
+
+		private void OBSController_OnConnected(object sender, EventArgs e)
+		{
+			DisplayCurrentDateTimeInOBS();
 		}
 
 		private async void ViewSelector_SelectedIndexChanged(object sender, Telerik.WinControls.UI.Data.PositionChangedEventArgs e)
@@ -75,9 +86,13 @@ namespace TaleLearnCode.TwitchCommander
 
 				ProjectInfo.Enabled = true;
 				ProjectInfo.WOPR = wopr;
+				ProjectInfo.OBSController = _obsController;
+				ProjectInfo.BrickDropAlert = (_alertSettings.ContainsKey("BrickDrop")) ? _alertSettings["BrickDrop"] : null;
+				ProjectInfo.OofAlert = (_alertSettings.ContainsKey("Oof")) ? _alertSettings["Oof"] : null;
 
 				StreamStats.Enabled = true;
 				StreamStats.WOPR = wopr;
+				StreamStats.OBSController = _obsController;
 
 				OBSStatus.Enabled = true;
 				OBSStatus.OBSControler = _obsController;
@@ -177,6 +192,11 @@ namespace TaleLearnCode.TwitchCommander
 		private void timer_Tick(object sender, EventArgs e)
 		{
 			if (ViewSelector.SelectedIndex > -1)
+			{
+				if (DateTime.Now.Second == 0 && _obsController.IsConnected)
+				{
+					DisplayCurrentDateTimeInOBS();
+				}
 				if (_bricksWithChad.ProjectTracking != null && ViewSelector.Items[ViewSelector.SelectedIndex].Text == _bricksWithChad.ChannelName)
 				{
 					ProjectInfo.UpdateProjectTimer(_bricksWithChad.ProjectTracking.OverallElapsedTime);
@@ -185,13 +205,13 @@ namespace TaleLearnCode.TwitchCommander
 				{
 					ProjectInfo.UpdateProjectTimer(_taleLearnCode.ProjectTracking.OverallElapsedTime);
 				}
+			}
 		}
 
-		private void button1_Click(object sender, EventArgs e)
+		private void DisplayCurrentDateTimeInOBS()
 		{
-			_obsController.Connect(_appSettings.OBSURL, _appSettings.OBSPassword);
-			//_obsController.TestMe();
-			_obsController.ShowSceneItem("SocketsTest", "Media Source: SocketsTest", 16);
+			_obsController.SetText("Text: CurrentDateTime", DateTime.Now.ToString("dddd, MMMM dd, yyyy hh:mm tt"));
 		}
+
 	}
 }

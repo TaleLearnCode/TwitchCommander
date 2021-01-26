@@ -15,6 +15,7 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 	{
 
 		private WOPR _wopr = null;
+		private OBSController _obsController = null;
 		private string _gameId;
 
 		public WOPR WOPR
@@ -30,10 +31,15 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 			}
 		}
 
+		public OBSController OBSController
+		{
+			get { return _obsController; }
+			set { _obsController = value; }
+		}
+
 		private void WOPR_OnStreamMetricsUpdated(object sender, OnStreamMetricsUpdatedArgs e)
 		{
-			DisplaySubscribersCount(e.Subscribers);
-			DisplayFollowersCount(e.Followers);
+			DisplayMetrics(e.Followers, e.Subscribers);
 		}
 
 		private async void WOPR_OnStreamUpdate(object sender, OnStreamUpdateArgs e)
@@ -44,16 +50,15 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 				int subscribers = await _wopr.GetSubscriberCountAsync();
 				int followers = await _wopr.GetFollowerCountAsync();
 
-				DisplayStreamId(e.Stream.Id);
-				DisplayGameId(e.Stream.GameId);
-				DisplayStreamType(e.Stream.Type);
-				DisplayStreamTitle(e.Stream.Title);
-				DisplayViewerCount(e.Stream.ViewerCount);
-				DisplayStartedAt(e.Stream.StartedAt);
-				DisplaySubscribersCount(subscribers);
-				DisplayFollowersCount(followers);
-
+				DisplayStreamStats(e.Stream, followers, subscribers);
 				radChartView2.Series[0].DataPoints.Add(new CategoricalDataPoint(e.Stream.ViewerCount));
+
+				if (_obsController != null)
+				{
+					_obsController.SetText("Text: Viewers", e.Stream.ViewerCount.Display());
+					_obsController.SetText("Text: Subscribers", subscribers.Display());
+					_obsController.SetText("Text: Followers", followers.Display());
+				}
 
 			}
 			catch (Exception ex)
@@ -66,92 +71,42 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 
 		}
 
-		delegate void DisplayStreamIdCallback(string streamId);
+		delegate void DisplayStreamStatsCallback(TwitchLib.Api.Helix.Models.Streams.Stream stream, int follwerCount, int subscriberCount);
 
-		private void DisplayStreamId(string streamId)
+		private async void DisplayStreamStats(TwitchLib.Api.Helix.Models.Streams.Stream stream, int followerCount, int subscriberCount)
 		{
 			if (StreamId.InvokeRequired)
-				Invoke(new DisplayStreamIdCallback(DisplayStreamId), new object[] { streamId });
-			else
-				StreamId.Text = streamId;
-		}
-
-		delegate void DisplayStreamTypeCallback(string streamType);
-
-		private void DisplayStreamType(string streamType)
-		{
-			if (StreamType.InvokeRequired)
-				Invoke(new DisplayStreamTypeCallback(DisplayStreamType), new object[] { streamType });
-			else
-				StreamType.Text = streamType;
-		}
-
-		delegate void DisplayGameIdCallback(string gameId);
-
-		private async void DisplayGameId(string gameId)
-		{
-			if (GameId.InvokeRequired)
 			{
-				Invoke(new DisplayGameIdCallback(DisplayGameId), new object[] { gameId });
+				Invoke(new DisplayStreamStatsCallback(DisplayStreamStats), new object[] { stream, followerCount, subscriberCount });
 			}
 			else
 			{
-				if (gameId != _gameId)
+				StreamId.Text = stream.Id;
+				StreamType.Text = stream.Type;
+				if (stream.GameId != _gameId)
 				{
 					GameId.Text = await _wopr.GetGameNameAsync();
-					_gameId = gameId;
+					_gameId = stream.GameId;
 				}
+				StartedAt.Text = stream.StartedAt.ToString("MM-dd-yyyy  HH:mm:ss");
+				StreamTitle.Text = stream.Title;
+				DisplayMetric(ViewersCount, stream.ViewerCount);
+				DisplayMetrics(followerCount, subscriberCount);
+
+				if (_obsController.IsConnected)
+				{
+					_obsController.SetText("Text: Subscribers", subscriberCount.Display());
+					_obsController.SetText("Text: Follower", followerCount.Display());
+					_obsController.SetText("Text: Views", followerCount.Display());
+				}
+
 			}
 		}
 
-		delegate void DisplayStartedAtCallback(DateTime startedAt);
-
-		private void DisplayStartedAt(DateTime startedAt)
+		private void DisplayMetrics(int followerCount, int subscriberCount)
 		{
-			if (StartedAt.InvokeRequired)
-				Invoke(new DisplayStartedAtCallback(DisplayStartedAt), new object[] { startedAt });
-			else
-				StartedAt.Text = startedAt.ToString("MM-dd-yyyy  HH:mm:ss");
-		}
-
-		delegate void DisplayStreamTitleCallback(string streamTitle);
-
-		private void DisplayStreamTitle(string streamTitle)
-		{
-			if (StreamTitle.InvokeRequired)
-				Invoke(new DisplayStreamTitleCallback(DisplayStreamTitle), new object[] { streamTitle });
-			else
-				StreamTitle.Text = streamTitle;
-		}
-
-		delegate void DisplayViewerCountCallback(int viewers);
-
-		private void DisplayViewerCount(int viewers)
-		{
-			if (ViewersCount.InvokeRequired)
-				Invoke(new DisplayViewerCountCallback(DisplayViewerCount), new object[] { viewers });
-			else
-				DisplayMetric(ViewersCount, viewers);
-		}
-
-		delegate void DisplaySubscribersCountCallback(int subscribers);
-
-		private void DisplaySubscribersCount(int subscribers)
-		{
-			if (SubscribersCount.InvokeRequired)
-				Invoke(new DisplaySubscribersCountCallback(DisplaySubscribersCount), new object[] { subscribers });
-			else
-				DisplayMetric(SubscribersCount, subscribers);
-		}
-
-		delegate void DisplayFollowersCountCallback(int followers);
-
-		private void DisplayFollowersCount(int followers)
-		{
-			if (FollowersCount.InvokeRequired)
-				Invoke(new DisplayFollowersCountCallback(DisplayFollowersCount), new object[] { followers });
-			else
-				DisplayMetric(FollowersCount, followers);
+			DisplayMetric(SubscribersCount, subscriberCount);
+			DisplayMetric(FollowersCount, followerCount);
 		}
 
 		private void DisplayMetric(RadLabel radLabel, int newValue)
@@ -167,10 +122,8 @@ namespace TaleLearnCode.TwitchCommander.UserControls
 		public StreamStats()
 		{
 			InitializeComponent();
-
 			FastLineSeries fastLineSeries = new FastLineSeries();
 			radChartView2.Series.Add(fastLineSeries);
-
 		}
 
 	}

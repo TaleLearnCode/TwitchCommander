@@ -12,7 +12,7 @@ namespace TaleLearnCode.TwitchCommander.Models
 		public string AlertName { get; set; }
 		public string AlertScene { get; set; }
 		public string AlertItem { get; set; }
-		public string AlertLength { get; set; }
+		public int AlertLength { get; set; }
 	}
 
 }
