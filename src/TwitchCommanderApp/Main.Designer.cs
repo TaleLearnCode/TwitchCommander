@@ -214,7 +214,7 @@
 			this.AlertsGroup.Controls.Add(this.ShowFollowerAlert);
 			this.AlertsGroup.Enabled = false;
 			this.AlertsGroup.HeaderText = "Alerts";
-			this.AlertsGroup.Location = new System.Drawing.Point(1381, 39);
+			this.AlertsGroup.Location = new System.Drawing.Point(1416, 39);
 			this.AlertsGroup.Name = "AlertsGroup";
 			this.AlertsGroup.Size = new System.Drawing.Size(134, 253);
 			this.AlertsGroup.TabIndex = 28;
@@ -294,7 +294,7 @@
 			this.OBSSettingsGroup.Controls.Add(this.OBSProfileLabel);
 			this.OBSSettingsGroup.Enabled = false;
 			this.OBSSettingsGroup.HeaderText = "OBS Settings";
-			this.OBSSettingsGroup.Location = new System.Drawing.Point(1189, 193);
+			this.OBSSettingsGroup.Location = new System.Drawing.Point(1169, 193);
 			this.OBSSettingsGroup.Name = "OBSSettingsGroup";
 			this.OBSSettingsGroup.Size = new System.Drawing.Size(216, 253);
 			this.OBSSettingsGroup.TabIndex = 32;
@@ -448,7 +448,7 @@
 			this.AutoScaleBaseSize = new System.Drawing.Size(7, 15);
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1575, 712);
+			this.ClientSize = new System.Drawing.Size(1587, 700);
 			this.Controls.Add(this.OBSStatus);
 			this.Controls.Add(this.StreamStats);
 			this.Controls.Add(this.ProjectInfo);

@@ -69,8 +69,15 @@ namespace TaleLearnCode.TwitchCommander
 
 		public bool DoesCurrentSceneContainSource(string sourceName)
 		{
-			OBSScene scene = _obs.GetCurrentScene();
-			return scene.Items.Any(x => x.SourceName == sourceName);
+			if (_obs.IsConnected)
+			{
+				OBSScene scene = _obs.GetCurrentScene();
+				return scene.Items.Any(x => x.SourceName == sourceName);
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		/// <summary>
